@@ -1373,10 +1373,10 @@ const RegistrationForm = () => {
 
             // Send email using EmailJS
             await emailjs.send(
-                import.meta.env.VITE_EMAILJS_SERVICE_ID,
-                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                'service_1lf847e',
+                'template_fwlk2fs',
                 templateParams,
-                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+                'voANcSoXZbEB5clc4'
             );
 
             // Log success for debugging
@@ -1393,10 +1393,7 @@ const RegistrationForm = () => {
             console.error("Error details:", {
                 status: error?.status,
                 text: error?.text,
-                message: error?.message,
-                serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID ? "SET" : "MISSING",
-                templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID ? "SET" : "MISSING",
-                publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY ? "SET" : "MISSING"
+                message: error?.message
             });
             alert("Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại!");
             setIsSubmitting(false);
