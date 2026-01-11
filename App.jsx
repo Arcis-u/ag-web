@@ -7,7 +7,7 @@ import {
     Rocket, Users, Award, Lightbulb, Target, ArrowRight, BookOpen,
     FlaskConical, Trophy, HelpCircle, MessageSquare, Quote, Zap, Menu, X,
     Terminal, Globe, Activity, Layers, Database, Hash, Crosshair, Layout, Wrench, RotateCw, Skull,
-    Fingerprint, Search
+    Fingerprint, Search, Gamepad2
 } from 'lucide-react';
 
 // Images
@@ -725,49 +725,70 @@ const Magnetic = ({ children, strength = 0.5 }) => {
 /*                                SECTIONS                                      */
 /* ============================================================================ */
 
-// DYNAMIC ISLAND NAVIGATION
+// DYNAMIC ISLAND NAVIGATION & SMART ACTION
+// DYNAMIC ISLAND NAVIGATION & GAME BAR
 const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const { scrollY } = useScroll();
+    const [hidden, setHidden] = useState(false);
+
+    // Smart Scroll Logic
+    useEffect(() => {
+        return scrollY.onChange((latest) => {
+            const previous = scrollY.getPrevious();
+            if (latest > previous && latest > 150) {
+                setHidden(true);
+            } else {
+                setHidden(false);
+            }
+        });
+    }, [scrollY]);
 
     const handleSmoothScroll = (e, href) => {
-        e.preventDefault();
-        setIsOpen(false);
-        const targetId = href.replace('#', '');
-
-        if (window.lenis) {
-            window.lenis.scrollTo(`#${targetId}`);
-        } else {
-            const elem = document.getElementById(targetId);
-            if (elem) {
-                elem.scrollIntoView({ behavior: 'smooth' });
+        if (href.startsWith('#')) {
+            e.preventDefault();
+            setIsOpen(false);
+            const targetId = href.replace('#', '');
+            if (window.lenis) {
+                window.lenis.scrollTo(`#${targetId}`);
+            } else {
+                const elem = document.getElementById(targetId);
+                if (elem) elem.scrollIntoView({ behavior: 'smooth' });
             }
         }
     };
 
     return (
         <motion.nav
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="fixed top-6 left-1/2 -translate-x-1/2 z-50" // Removed mix-blend-difference
+            variants={{
+                visible: { y: 0, opacity: 1 },
+                hidden: { y: -100, opacity: 0 }
+            }}
+            animate={hidden ? "hidden" : "visible"}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="fixed top-6 left-[48%] -translate-x-1/2 z-50 flex items-start gap-2" // Unified flexible bar, shifted Left (48%)
         >
+
+
+            {/* 2. MAIN MENU (Dynamic Island) */}
             <motion.div
                 layout
                 className="glass-panel rounded-3xl overflow-hidden backdrop-blur-xl"
                 style={{
-                    backgroundColor: 'rgba(5, 5, 5, 0.95)', // Increased opacity
+                    backgroundColor: 'rgba(5, 5, 5, 0.95)',
                     borderColor: 'rgba(255,255,255,0.1)',
-                    boxShadow: isOpen ? '0 20px 50px -10px rgba(0,0,0,0.8)' : 'none'
+                    boxShadow: isOpen ? '0 20px 50px -10px rgba(0,0,0,0.8)' : '0 10px 30px -5px rgba(0,0,0,0.5)'
                 }}
                 animate={{
-                    width: isOpen ? 280 : 180, // Compact width
-                    height: isOpen ? "auto" : 48, // Reduced height
+                    width: isOpen ? 280 : 160,
+                    height: isOpen ? "auto" : 48,
                     borderRadius: isOpen ? 20 : 100
                 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
                 <div className="flex flex-col relative">
                     {/* Header / Trigger */}
-                    <div className="flex items-center justify-between px-2 h-12 w-full z-20"> {/* Reduced height to 12 */}
+                    <div className="flex items-center justify-between px-2 h-12 w-full z-20">
                         <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center pointer-events-none shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                             <span className="font-black text-black text-xs">S.</span>
                         </div>
@@ -795,7 +816,7 @@ const Navigation = () => {
                                         { label: 'Thuật Toán', href: '#algorithm', sub: 'Core_Logic' },
                                         { label: 'Hệ Thống', href: '#system', sub: 'Sys_Config' },
                                         { label: 'Phân Ban', href: '#tracks', sub: 'Unit_Select' },
-                                        { label: 'Gia Nhập', href: '#apply', sub: 'Join_Protocol' }
+
                                     ].map((item, i) => (
                                         <motion.a
                                             key={item.label}
@@ -827,6 +848,53 @@ const Navigation = () => {
                     </AnimatePresence>
                 </div>
             </motion.div>
+            {/* 2. REGISTER BUTTON (Middle) */}
+            <motion.a
+                href="#apply"
+                onClick={(e) => handleSmoothScroll(e, '#apply')}
+                className="glass-panel h-12 px-5 flex items-center gap-3 rounded-full bg-black/95 border border-white/10 hover:border-lime-400/50 hover:bg-lime-900/10 transition-all duration-300 group overflow-hidden relative cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+                {/* Visual Pulse */}
+                <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
+                </span>
+
+                <span className="font-mono text-[10px] font-bold text-white tracking-widest group-hover:text-lime-400 transition-colors">
+                    ĐĂNG KÝ
+                </span>
+
+                <ChevronDown className="w-3 h-3 text-white/50 group-hover:text-lime-400 -rotate-90 group-hover:rotate-0 transition-transform duration-300" />
+            </motion.a>
+
+            {/* 3. GAME MODULE (Right) */}
+            <motion.a
+                href="/game"
+                className="glass-panel h-12 px-4 md:px-5 flex items-center gap-3 rounded-full bg-black/95 border border-white/10 hover:border-purple-500/50 hover:bg-purple-900/10 transition-all duration-300 group overflow-hidden relative cursor-pointer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+
+                <Gamepad2 className="w-4 h-4 text-purple-400 group-hover:rotate-12 transition-transform" />
+
+                {/* Text Stack */}
+                <div className="flex flex-col leading-none">
+                    <span className="font-black text-[10px] text-white tracking-widest group-hover:text-purple-400 transition-colors">GAME</span>
+                    <span className="font-mono text-[8px] text-purple-400/50 group-hover:text-purple-400 transition-colors">ZONE</span>
+                </div>
+
+                {/* Tech Decor */}
+                <div className="hidden md:block w-[1px] h-4 bg-white/10 mx-1" />
+                <div className="hidden md:flex gap-0.5">
+                    <div className="w-1 h-1 rounded-full bg-purple-500 animate-pulse" />
+                    <div className="w-1 h-1 rounded-full bg-white/20" />
+                </div>
+            </motion.a>
         </motion.nav>
     );
 };
@@ -2795,9 +2863,9 @@ const ProjectArchives = () => {
     const projects = [
         {
             id: "ARCH_01",
-            name: "ALPHA ROVER",
+            name: "ALPHA DRONE",
             category: "Robotics",
-            desc: "Xe tự hành thám hiểm địa hình với khả năng vẽ bản đồ LIDAR thời gian thực.",
+            desc: "Drone xử lí cỏ dại tích hợp điều hòa không khí và độ ẩm.",
             stats: { power: 85, ai: 40, mech: 95 },
             status: "DEPLOYED",
             icon: Wrench,
@@ -2808,7 +2876,7 @@ const ProjectArchives = () => {
             id: "ARCH_02",
             name: "NEURAL NET",
             category: "AI / Vision",
-            desc: "Mạng nơ-ron tích chập (CNN) phát hiện bệnh lý thực vật qua hình ảnh drone.",
+            desc: "Ứng dụng học sâu trong dự đoán trạng thái trẻ sơ sinh",
             stats: { power: 90, ai: 98, mech: 20 },
             status: "LEARNING",
             icon: Cpu,
@@ -2819,7 +2887,7 @@ const ProjectArchives = () => {
             id: "ARCH_03",
             name: "BIO SYNTH",
             category: "Biotech",
-            desc: "Hệ thống nhà kính thông minh tự cân bằng độ ẩm và dưỡng chất.",
+            desc: "Hệ thống nhà kính thông minh tự cân bằng độ ẩm và điều hòa không khí.",
             stats: { power: 60, ai: 75, mech: 50 },
             status: "PROTOTYPE",
             icon: FlaskConical,
@@ -3014,9 +3082,9 @@ const ProjectArchives = () => {
 // TRANSMISSION LOG (Testimonials)
 const TransmissionLog = () => {
     const logs = [
-        { id: "LOG_882", user: "H. Minh", role: "Cựu SV '24", msg: "CLB là chất xúc tác cho sự nghiệp CS của tôi. Thực sự là một chiều không gian khác." },
-        { id: "LOG_991", user: "L. An", role: "Đội Trưởng Robotics", msg: "Chúng tôi không chỉ chế tạo robot; chúng tôi xây dựng cơ sở hạ tầng tương lai." },
-        { id: "LOG_102", user: "T. Bảo", role: "GĐ Sáng Tạo", msg: "Nơi nghệ thuật gặp gỡ thuật toán. Sự hỗn loạn hoàn hảo." }
+        { id: "LOG_882", user: "N. Anh", role: "Tác giả 'Máy phát điện vỉnh cữu hao phí xấp xỉ 0%'", msg: "CLB là chất xúc tác cho sự nghiệp nghiên cứu của tôi. Họ đã giúp tôi hoàn thành dự án vươn tầm thế giới." },
+        { id: "LOG_991", user: "Stephen Hawking", role: "Nhà khoa học", msg: "Nếu không có CLB STEM này, tôi đã không thể giải mã được bí ẩn đằng sau Lỗ Đen Vũ trụ" },
+        { id: "LOG_102", user: "rip_indra", role: "Nhà phát triển Blox Fruit", msg: "CLB này là nơi đã giúp tôi có được những kiến thức kinh nghiệm mà không nơi nào có và đã góp phần hiện thực hóa Blox Fruit" }
     ];
 
     return (

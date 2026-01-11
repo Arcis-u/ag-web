@@ -55,6 +55,11 @@
 - **CRT Overlay** - màn hình cũ retro
 - **Tech Grid** - lưới kỹ thuật nền
 
+### 🎮 Game Zone (New Extension)
+- **Multi-Page Application (MPA)**: Hệ thống tách biệt hoàn toàn chạy trên `/game`
+- **Immersive UI**: Giao diện tối, tập trung vào trải nghiệm người dùng
+- **Unified Command Bar**: Thanh điều hướng tích hợp [Menu] [Đăng ký] [Game]
+
 </td>
 </tr>
 </table>
@@ -78,7 +83,7 @@
 | Công nghệ | Mô tả |
 |-----------|-------|
 | ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB) | UI Library |
-| ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=flat-square&logo=vite&logoColor=FFD62E) | Build Tool |
+| ![Vite](https://img.shields.io/badge/Vite-B73BFE?style=flat-square&logo=vite&logoColor=FFD62E) | Build Tool (MPA Configured) |
 | ![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white) | Styling |
 | ![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?style=flat-square&logo=framer&logoColor=blue) | Animations |
 | ![Lenis](https://img.shields.io/badge/Lenis-ccff00?style=flat-square) | Smooth Scroll |
@@ -107,6 +112,7 @@ npm install
 npm run dev
 
 # 5. Mở trình duyệt tại http://localhost:5173
+#    Truy cập Game Zone tại http://localhost:5173/game
 ```
 
 ### Build cho Production
@@ -123,15 +129,15 @@ npm run preview
 ```
 ag-web/
 ├── 📂 public/
-│   └── 📂 assets/          # Hình ảnh
 ├── 📂 src/
-│   ├── 📄 App.jsx          # Component chính
-│   ├── 📄 main.jsx         # Entry point
+│   ├── 📄 App.jsx          # Homepage Component
+│   ├── 📄 Game.jsx         # Game Page Component (New)
+│   ├── 📄 main.jsx         # Homepage Entry
 │   └── 📄 index.css        # Global styles
-├── 📄 index.html
+├── 📄 index.html           # Homepage Entry HTML
+├── 📄 game.html            # Game Page Entry HTML (New)
 ├── 📄 package.json
-├── 📄 tailwind.config.js
-├── 📄 vite.config.js
+├── 📄 vite.config.js       # MPA Configuration
 └── 📄 README.md
 ```
 
