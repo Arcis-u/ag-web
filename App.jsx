@@ -720,8 +720,8 @@ const SectionDivider = ({ inverted = false }) => {
 
 const RegistrationForm = () => {
     const [step, setStep] = useState(0);
-    const [formData, setFormData] = useState({ name: '', class: '', email: '', track: '' });
-    const [touched, setTouched] = useState({ name: false, class: false, email: false, track: false });
+    const [formData, setFormData] = useState({ name: '', class: '', email: '', track: '', contribution: '' });
+    const [touched, setTouched] = useState({ name: false, class: false, email: false, track: false, contribution: false });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -769,6 +769,9 @@ const RegistrationForm = () => {
         } else if (step === 1) {
             isValid = validate('email', formData.email);
             if (!formData.email) { setTouched(prev => ({ ...prev, email: true })); isValid = false; }
+        } else if (step === 2) {
+            // Step 2 is now Contribution (Optional), so always valid or check limits
+            isValid = true;
         }
 
         if (isValid) setStep(prev => prev + 1);
@@ -785,33 +788,38 @@ const RegistrationForm = () => {
             'Programming': 'Lập trình',
             'Robotics': 'Robot',
             'Science': 'Khoa học',
-            'Media': 'Truyền thông'
+            'Media': 'Truyền thông',
+            'Design': 'Thiết kế'
         };
 
-        // Prepare email content
-        const targetEmail = 'anhquan130408@gmail.com';
-        const subject = encodeURIComponent(`[STEM Club] Đăng Ký - ${formData.name}`);
-        const body = encodeURIComponent(
-            `=== ĐĂNG KÝ STEM CLUB ===
+        const templateParams = {
+            to_name: 'STEM Club Admin',
+            from_name: formData.name,
+            from_class: formData.class,
+            from_email: formData.email,
+            selected_track: trackMap[formData.track],
+            contribution: formData.contribution || "Không có",
+            submission_id: Math.random().toString(36).substr(2, 9).toUpperCase(),
+            submission_time: new Date().toLocaleString('vi-VN')
+        };
 
-HỒ SƠ (Họ và Tên): ${formData.name}
-ĐƠN VỊ (Lớp): ${formData.class}
-LIÊN HỆ (Email): ${formData.email}
-NHIỆM VỤ (Ban): ${trackMap[formData.track]}
+        try {
+            // NOTE: You need to install @emailjs/browser: npm install @emailjs/browser
+            // And replace these placeholders with your actual EmailJS keys
+            await emailjs.send('service_1lf847e', 'template_fwlk2fs', templateParams, 'voANcSoXZbEB5clc4');
 
----
-Thời gian: ${new Date().toLocaleString('vi-VN')}
-Mã Đăng Ký: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
-`
-        );
+            // For now, simulating API call success
+            console.log("Email would be sent to tkdang0812@gmail.com", templateParams);
+            await new Promise(r => setTimeout(r, 1500));
 
-        // Open mailto link
-        const mailtoLink = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
-        window.open(mailtoLink, '_blank');
-
-        await new Promise(r => setTimeout(r, 1000));
-        setIsSubmitting(false);
-        setStep(4);
+            // Success
+            setIsSubmitting(false);
+            setStep(5); // Move to success step (adjusted index)
+        } catch (error) {
+            console.error("Email send failed:", error);
+            alert("Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại!");
+            setIsSubmitting(false);
+        }
     };
 
     const steps = [
@@ -876,20 +884,39 @@ Mã Đăng Ký: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
                         <div className={`input-underline ${errors.email && touched.email ? 'bg-red-500/50' : ''}`} />
                     </div>
                 </div>
-            )
+            ),
         },
         {
             id: 2,
-            title: "Chọn ban",
+            title: "Đóng góp",
             content: (
-                <div className="space-y-8">
-                    <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 03: PHÂN LOẠI NHIỆM VỤ</p>
-                    <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-6">
+                    <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 03: KHÁT VỌNG & ĐÓNG GÓP</p>
+                    <div className="group">
+                        <label className="block text-xs font-mono text-white/50 mb-2">BẠN MUỐN ĐÓNG GÓP GÌ CHO CLB?</label>
+                        <textarea
+                            className="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white placeholder-white/20 focus:outline-none focus:border-lime-400 focus:bg-white/10 transition-all min-h-[120px]"
+                            placeholder="Chia sẻ ngắn gọn về kỹ năng đặc biệt, mong muốn hoặc ý tưởng dự án của bạn..."
+                            value={formData.contribution}
+                            onChange={e => setFormData({ ...formData, contribution: e.target.value })}
+                        />
+                    </div>
+                </div>
+            )
+        },
+        {
+            id: 3,
+            title: "Vị trí",
+            content: (
+                <div className="space-y-6">
+                    <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 04: CHỌN MÔ_ĐUN</p>
+                    <div className="grid grid-cols-2 gap-3">
                         {[
                             { key: 'Programming', label: 'Lập trình' },
                             { key: 'Robotics', label: 'Robot' },
                             { key: 'Science', label: 'Khoa học' },
-                            { key: 'Media', label: 'Truyền thông' }
+                            { key: 'Media', label: 'Truyền thông' },
+                            { key: 'Design', label: 'Thiết kế' }
                         ].map((track) => (
                             <button
                                 key={track.key}
@@ -905,23 +932,24 @@ Mã Đăng Ký: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
             )
         },
         {
-            id: 3,
+            id: 4,
             title: "Xác nhận",
             content: (
                 <div className="space-y-8 text-center">
-                    <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 04: XÁC THỰC DỮ LIỆU</p>
+                    <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 05: XÁC THỰC DỮ LIỆU</p>
                     <div className="border border-white/10 p-8 text-left space-y-4 font-mono text-sm bg-white/5 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-lime-400/20" />
                         <div className="flex justify-between border-b border-white/5 pb-2"><span>Họ và tên:</span> <span className="text-white">{formData.name}</span></div>
                         <div className="flex justify-between border-b border-white/5 pb-2"><span>Lớp:</span> <span className="text-white">{formData.class}</span></div>
                         <div className="flex justify-between border-b border-white/5 pb-2"><span>Email:</span> <span className="text-white">{formData.email}</span></div>
-                        <div className="flex justify-between"><span>Ban:</span> <span className="text-lime-400">{formData.track === 'Programming' ? 'Lập trình' : formData.track === 'Robotics' ? 'Robot' : formData.track === 'Science' ? 'Khoa học' : 'Truyền thông'}</span></div>
+                        <div className="flex justify-between border-b border-white/5 pb-2"><span>Đóng góp:</span> <span className="text-white truncate max-w-[200px]">{formData.contribution || "Không"}</span></div>
+                        <div className="flex justify-between"><span>Ban:</span> <span className="text-lime-400">{formData.track === 'Programming' ? 'Lập trình' : formData.track === 'Robotics' ? 'Robot' : formData.track === 'Science' ? 'Khoa học' : formData.track === 'Media' ? 'Truyền thông' : 'Thiết kế'}</span></div>
                     </div>
                 </div>
             )
         },
         {
-            id: 4,
+            id: 5,
             title: "Thành công",
             content: (
                 <div className="text-center py-12">
@@ -942,7 +970,7 @@ Mã Đăng Ký: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
     return (
         <section id="apply" className="py-32 px-6 relative bg-[#020205]">
             <div className="max-w-3xl mx-auto">
-                {step < 4 && (
+                {step < 5 && (
                     <div className="mb-16">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="w-12 h-12 rounded-xl bg-lime-400/20 flex items-center justify-center border border-lime-400">
@@ -956,11 +984,11 @@ Mã Đăng Ký: ${Math.random().toString(36).substr(2, 9).toUpperCase()}
 
                         <div className="flex justify-between items-center">
                             <div className="flex gap-2">
-                                {[0, 1, 2, 3].map(i => (
+                                {[0, 1, 2, 3, 4].map(i => (
                                     <div key={i} className={`h-1 w-12 transition-colors duration-500 ${i <= step ? 'bg-lime-400' : 'bg-white/10'}`} />
                                 ))}
                             </div>
-                            <div className="font-mono text-xs text-white/30">TIẾN TRÌNH {step + 1} // 04</div>
+                            <div className="font-mono text-xs text-white/30">TIẾN TRÌNH {step + 1} // 05</div>
                         </div>
                     </div>
                 )}
@@ -1593,8 +1621,8 @@ const CyberGameSection = () => {
                                                 <motion.div
                                                     key={key}
                                                     className={`relative p-3 rounded-lg transition-all duration-500 ${isWinner
-                                                            ? 'bg-lime-400/10 border border-lime-400/50 shadow-[0_0_20px_rgba(163,230,53,0.2)] scale-105 z-10'
-                                                            : 'border border-transparent opacity-60'
+                                                        ? 'bg-lime-400/10 border border-lime-400/50 shadow-[0_0_20px_rgba(163,230,53,0.2)] scale-105 z-10'
+                                                        : 'border border-transparent opacity-60'
                                                         }`}
                                                     initial={{ opacity: 0, x: 20 }}
                                                     animate={{ opacity: isWinner ? 1 : 0.6, x: 0 }}
