@@ -1390,6 +1390,14 @@ const RegistrationForm = () => {
             setStep(5); // Move to success step (adjusted index)
         } catch (error) {
             console.error("Email send failed:", error);
+            console.error("Error details:", {
+                status: error?.status,
+                text: error?.text,
+                message: error?.message,
+                serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID ? "SET" : "MISSING",
+                templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID ? "SET" : "MISSING",
+                publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY ? "SET" : "MISSING"
+            });
             alert("Có lỗi xảy ra khi gửi đơn. Vui lòng thử lại!");
             setIsSubmitting(false);
         }
