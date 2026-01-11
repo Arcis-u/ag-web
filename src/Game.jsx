@@ -2,12 +2,37 @@ import React, { useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { motion, AnimatePresence } from 'framer-motion'
 import '../index.css'
-import { Gamepad2, ArrowLeft, Terminal, Cpu, Zap, Activity, Power, LogOut, CornerDownLeft } from 'lucide-react'
+import { Gamepad2, ArrowLeft, ArrowRight, Terminal, Cpu, Zap, Activity, Power, LogOut, CornerDownLeft, Box, Hexagon } from 'lucide-react'
 
 // COMPONENTS
 import GameBackground from './components/game/GameBackground'
 import HUD from './components/game/HUD'
 import LogicBreaker from './components/game/LogicBreaker'
+import NeonRunner from './components/game/NeonRunner'
+
+// GAME REGISTRY
+const GAMES = [
+    {
+        id: 'LOGIC_BREAKER',
+        title: 'LOGIC BREAKER',
+        subtitle: 'SECURITY PUZZLE',
+        icon: Hexagon,
+        color: 'text-cyan-400',
+        borderColor: 'group-hover:border-cyan-500/50',
+        shadowColor: 'hover:shadow-[0_0_100px_-10px_rgba(6,182,212,0.3)]',
+        accent: 'cyan'
+    },
+    {
+        id: 'NEON_RUNNER',
+        title: 'NEON DRIFT',
+        subtitle: 'REFLEX TEST',
+        icon: Zap,
+        color: 'text-purple-400',
+        borderColor: 'group-hover:border-purple-500/50',
+        shadowColor: 'hover:shadow-[0_0_100px_-10px_rgba(168,85,247,0.3)]',
+        accent: 'purple'
+    }
+];
 
 // UTILS
 const CircularText = ({ text, radius, className }) => {
@@ -31,9 +56,11 @@ const CircularText = ({ text, radius, className }) => {
 
 const GameZone = () => {
     const [booted, setBooted] = useState(false);
-    const [hovered, setHovered] = useState(false);
+    const [selectedGameIndex, setSelectedGameIndex] = useState(0);
     const [activeGame, setActiveGame] = useState(null);
     const [exiting, setExiting] = useState(false);
+
+    const selectedGame = GAMES[selectedGameIndex];
 
     // Boot Sequence Effect
     useEffect(() => {
@@ -47,6 +74,16 @@ const GameZone = () => {
         setTimeout(() => {
             window.location.href = '/';
         }, 800);
+    };
+
+    const nextGame = (e) => {
+        e.stopPropagation();
+        setSelectedGameIndex((prev) => (prev + 1) % GAMES.length);
+    };
+
+    const prevGame = (e) => {
+        e.stopPropagation();
+        setSelectedGameIndex((prev) => (prev - 1 + GAMES.length) % GAMES.length);
     };
 
     return (
@@ -68,7 +105,7 @@ const GameZone = () => {
             </div>
 
             {/* L2: HEADS UP DISPLAY (Overlay) */}
-            <motion.div animate={{ opacity: exiting ? 0 : 1 }} transition={{ duration: 0.3 }}>
+            <motion.div animate={{ opacity: exiting || activeGame ? 0 : 1 }} transition={{ duration: 0.3 }}>
                 <HUD />
             </motion.div>
 
@@ -78,6 +115,8 @@ const GameZone = () => {
                 {/* GAME CONTAINER */}
                 <div className="pointer-events-auto w-full flex items-center justify-center">
                     <AnimatePresence mode="wait">
+
+                        {/* 1. LOGIC BREAKER */}
                         {!exiting && activeGame === 'LOGIC_BREAKER' && (
                             <motion.div
                                 key="game-logic-breaker"
@@ -91,39 +130,35 @@ const GameZone = () => {
                             </motion.div>
                         )}
 
+                        {/* 2. NEON RUNNER */}
+                        {!exiting && activeGame === 'NEON_RUNNER' && (
+                            <motion.div
+                                key="game-neon-runner"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 1 }}
+                                className="absolute inset-0 z-50 flex items-center justify-center"
+                            >
+                                <NeonRunner onExit={() => setActiveGame(null)} />
+                            </motion.div>
+                        )}
+
+                        {/* 3. MAIN HUB (SELECTOR) */}
                         {!exiting && activeGame === null && (
-                            /* MAIN HUB */
                             <motion.div
                                 key="hub-main"
                                 initial={{ scale: 0.8, opacity: 0, filter: "blur(20px)" }}
                                 animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
                                 exit={{ scale: 0.8, opacity: 0, filter: "blur(20px)" }}
                                 transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-                                className="relative group perspective-1000 cursor-pointer"
-                                onHoverStart={() => setHovered(true)}
-                                onHoverEnd={() => setHovered(false)}
-                                onClick={() => setActiveGame('LOGIC_BREAKER')}
+                                className="relative group perspective-1000"
                             >
-                                {/* COMPLEX ORBITALS */}
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                    <motion.div
-                                        animate={{ rotate: 360 }}
-                                        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                                        className="w-[400px] h-[400px] border border-dashed border-white/5 rounded-full"
-                                    />
-                                    <motion.div
-                                        animate={{ rotate: -360 }}
-                                        transition={{ duration: 45, repeat: Infinity, ease: "linear" }}
-                                        className="w-[500px] h-[500px] border border-white/5 rounded-full opacity-50 absolute"
-                                    />
-                                    <CircularText text="SYSTEM_OVERRIDE_PROTOCOL_INITIATED_ACCESS_GRANTED_" radius={160} className="w-[320px] h-[320px] opacity-20" />
-                                </div>
-
-                                {/* Holographic Core */}
-                                <div className="absolute -inset-20 bg-purple-500/10 blur-[80px] rounded-full group-hover:bg-cyan-500/20 transition-colors duration-1000" />
-
                                 {/* MAIN CARD */}
-                                <div className="relative border border-white/10 bg-black/40 backdrop-blur-2xl p-16 rounded-3xl flex flex-col items-center gap-8 shadow-[0_0_80px_-20px_rgba(88,28,135,0.4)] hover:border-white/30 hover:shadow-[0_0_100px_-10px_rgba(6,182,212,0.3)] transition-all duration-500 transform-gpu preserve-3d group-hover:scale-[1.02]">
+                                <div
+                                    onClick={() => setActiveGame(selectedGame.id)}
+                                    className={`relative w-[500px] h-[600px] border border-white/10 bg-black/40 backdrop-blur-2xl p-16 rounded-3xl flex flex-col items-center justify-center gap-8 shadow-[0_0_80px_-20px_rgba(88,28,135,0.4)] hover:border-white/30 ${selectedGame.shadowColor} transition-all duration-500 transform-gpu preserve-3d group-hover:scale-[1.02] cursor-pointer`}
+                                >
 
                                     {/* Corners */}
                                     <div className="absolute top-4 left-4 w-2 h-2 border border-white/30" />
@@ -131,33 +166,58 @@ const GameZone = () => {
                                     <div className="absolute bottom-4 left-4 w-2 h-2 border border-white/30" />
                                     <div className="absolute bottom-4 right-4 w-2 h-2 border border-white/30" />
 
-                                    {/* Icon */}
-                                    <div className="relative w-32 h-32 flex items-center justify-center">
-                                        <motion.div
-                                            animate={{ rotate: 360, scale: hovered ? 1.1 : 1 }}
-                                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                                            className="absolute inset-0 border-t-2 border-r-2 border-purple-500 rounded-full blur-[1px]"
-                                        />
-                                        <motion.div
-                                            animate={{ rotate: -180, scale: hovered ? 0.9 : 1 }}
-                                            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                                            className="absolute inset-2 border-b-2 border-l-2 border-cyan-500 rounded-full blur-[1px] opacity-70"
-                                        />
-                                        <div className="absolute inset-8 bg-purple-500/20 rounded-full animate-pulse blur-md" />
-                                        <Gamepad2 className={`w-12 h-12 text-white drop-shadow-[0_0_15px_rgba(168,85,247,0.8)] transition-all duration-500 ${hovered ? 'scale-110 text-cyan-400' : ''}`} />
+                                    {/* NAV ARROWS */}
+                                    <button onClick={prevGame} className="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-white/20 hover:text-white transition-colors z-50">
+                                        <ArrowLeft size={32} />
+                                    </button>
+                                    <button onClick={nextGame} className="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-white/20 hover:text-white transition-colors z-50">
+                                        <ArrowRight size={32} />
+                                    </button>
+
+                                    {/* Dynamic Icon */}
+                                    <div className="relative w-40 h-40 flex items-center justify-center">
+                                        <AnimatePresence mode="wait">
+                                            <motion.div
+                                                key={selectedGame.id}
+                                                initial={{ scale: 0, rotate: -180, opacity: 0 }}
+                                                animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                                                exit={{ scale: 0, rotate: 180, opacity: 0 }}
+                                                transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                                            >
+                                                <selectedGame.icon className={`w-24 h-24 ${selectedGame.color} drop-shadow-[0_0_30px_currentColor]`} />
+                                            </motion.div>
+                                        </AnimatePresence>
                                     </div>
 
-                                    {/* Title */}
-                                    <div className="text-center space-y-4 relative z-20">
-                                        <h1 className="text-7xl md:text-9xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-gray-100 to-gray-600 drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-                                            GAME<br />
-                                            <span className={`transition-colors duration-500 ${hovered ? 'text-cyan-400' : 'text-purple-400'}`}>ZONE</span>
-                                        </h1>
-                                        <div className={`flex items-center justify-center gap-2 font-mono text-xs tracking-[0.3em] uppercase py-1 px-4 rounded border transition-all duration-300 ${hovered ? 'bg-cyan-900/20 border-cyan-500/50 text-cyan-300' : 'bg-purple-900/10 border-purple-500/20 text-purple-300/80'}`}>
+                                    {/* Title info */}
+                                    <div className="text-center space-y-2 relative z-20">
+                                        <motion.div
+                                            key={selectedGame.id}
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                        >
+                                            <h2 className={`font-mono text-sm tracking-[0.5em] ${selectedGame.color} mb-2`}>{selectedGame.subtitle}</h2>
+                                            <h1 className="text-5xl font-black tracking-tighter text-white uppercase break-words w-full">
+                                                {selectedGame.title}
+                                            </h1>
+                                        </motion.div>
+
+                                        <div className={`mt-8 inline-flex items-center justify-center gap-2 font-mono text-xs tracking-[0.3em] uppercase py-2 px-6 rounded border transition-all duration-300 ${selectedGame.accent === 'cyan' ? 'bg-cyan-900/20 border-cyan-500/50 text-cyan-300' : 'bg-purple-900/20 border-purple-500/50 text-purple-300'}`}>
                                             <Terminal size={12} />
                                             <span>{booted ? "Click to Breach" : "Initializing..."}</span>
                                         </div>
                                     </div>
+
+                                    {/* Pagination Dots */}
+                                    <div className="absolute bottom-8 flex gap-2">
+                                        {GAMES.map((_, i) => (
+                                            <div
+                                                key={i}
+                                                className={`w-2 h-2 rounded-full transition-colors duration-300 ${i === selectedGameIndex ? 'bg-white' : 'bg-white/20'}`}
+                                            />
+                                        ))}
+                                    </div>
+
                                 </div>
                             </motion.div>
                         )}

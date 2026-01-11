@@ -17,6 +17,8 @@ export default {
             fontFamily: {
                 sans: ['Inter', 'system-ui', 'sans-serif'],
                 display: ['SF Pro Display', 'Inter', 'system-ui', 'sans-serif'],
+                serif: ['Playfair Display', 'Be Vietnam Pro', 'serif'],
+                vietnam: ['"Be Vietnam Pro"', 'sans-serif'],
             },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

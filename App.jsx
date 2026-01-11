@@ -185,23 +185,23 @@ const TechOverlay = () => {
             <div className="scanline" />
 
             {/* Corner Crosshairs */}
-            <div className="crosshair top-8 left-8" />
-            <div className="crosshair top-8 right-8" />
-            <div className="crosshair bottom-8 left-8" />
-            <div className="crosshair bottom-8 right-8" />
+            <div className="crosshair top-8 left-8 hidden md:block" />
+            <div className="crosshair top-8 right-8 hidden md:block" />
+            <div className="crosshair bottom-8 left-8 hidden md:block" />
+            <div className="crosshair bottom-8 right-8 hidden md:block" />
 
             {/* System Data */}
-            <div className="absolute top-8 left-16 font-mono text-[10px] text-white/40 flex gap-4">
+            <div className="absolute top-8 left-4 md:left-16 font-mono text-[10px] text-white/40 flex gap-4 hidden md:flex">
                 <span>SYS.VER.3.0.2</span>
                 <span className="text-lime-400">● ONLINE</span>
             </div>
 
-            <div className="absolute top-8 right-16 font-mono text-[10px] text-white/40 text-right">
+            <div className="absolute top-8 right-4 md:right-16 font-mono text-[10px] text-white/40 text-right hidden md:block">
                 <div>T: {time}</div>
-                <div>LOC: 16.85°N, 107.10°E</div>
+                <div>LOC: 36.67°N, 107.10°E</div>
             </div>
 
-            <div className="absolute bottom-8 left-16 font-mono text-[10px] text-white/40">
+            <div className="absolute bottom-8 left-4 md:left-16 font-mono text-[10px] text-white/40 hidden md:block">
                 CPU: <span className="text-white">OPTIMAL</span> // MEM: <span className="text-white">STABLE</span>
             </div>
 
@@ -766,7 +766,7 @@ const Navigation = () => {
             }}
             animate={hidden ? "hidden" : "visible"}
             transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="fixed top-6 left-[48%] -translate-x-1/2 z-50 flex items-start gap-2" // Unified flexible bar, shifted Left (48%)
+            className="fixed top-4 md:top-6 left-1/2 md:left-[48%] -translate-x-1/2 z-50 flex items-start gap-2 w-[95%] md:w-auto justify-center" // Mobile: Top centered, Desktop: Original 48% left
         >
 
 
@@ -864,7 +864,7 @@ const Navigation = () => {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
                 </span>
 
-                <span className="font-mono text-[10px] font-bold text-white tracking-widest group-hover:text-lime-400 transition-colors">
+                <span className="font-mono text-[10px] font-bold text-white tracking-widest group-hover:text-lime-400 transition-colors hidden md:block">
                     ĐĂNG KÝ
                 </span>
 
@@ -883,7 +883,7 @@ const Navigation = () => {
                 <Gamepad2 className="w-4 h-4 text-purple-400 group-hover:rotate-12 transition-transform" />
 
                 {/* Text Stack */}
-                <div className="flex flex-col leading-none">
+                <div className="flex flex-col leading-none hidden md:flex">
                     <span className="font-black text-[10px] text-white tracking-widest group-hover:text-purple-400 transition-colors">GAME</span>
                     <span className="font-mono text-[8px] text-purple-400/50 group-hover:text-purple-400 transition-colors">ZONE</span>
                 </div>
@@ -957,7 +957,9 @@ const ParticleMesh = () => {
 
         const initParticles = () => {
             particles = [];
-            const count = Math.min(150, (width * height) / 10000); // Increased density
+            particles = [];
+            const isMobile = width < 768;
+            const count = isMobile ? 40 : Math.min(150, (width * height) / 10000); // Optimized for mobile
             for (let i = 0; i < count; i++) {
                 particles.push({
                     x: Math.random() * width,
@@ -1078,14 +1080,14 @@ const CinematicHero = () => {
                 <div className="relative z-20">
                     <StaggerText
                         text="ĐỊNH HÌNH"
-                        className="text-[12vw] md:text-[10vw] font-black leading-none tracking-tighter text-white opacity-90 mix-blend-overlay"
+                        className="text-[15vw] md:text-9xl font-black leading-none tracking-tighter text-white opacity-90 mix-blend-overlay"
                         delay={0.2}
                     />
                 </div>
                 <div className="relative z-20">
                     <StaggerText
                         text="TƯƠNG LAI"
-                        className="text-[12vw] md:text-[10vw] font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-cyan-400"
+                        className="text-[15vw] md:text-9xl font-black leading-none tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-cyan-400"
                         delay={0.5}
                     />
                 </div>
@@ -1368,12 +1370,19 @@ const RegistrationForm = () => {
         };
 
         try {
-            // NOTE: You need to install @emailjs/browser: npm install @emailjs/browser
-            // And replace these placeholders with your actual EmailJS keys
-            await emailjs.send('service_1lf847e', 'template_fwlk2fs', templateParams, 'voANcSoXZbEB5clc4');
 
-            // For now, simulating API call success
-            console.log("Email would be sent to tkdang0812@gmail.com", templateParams);
+            // Send email using EmailJS
+            await emailjs.send(
+                import.meta.env.VITE_EMAILJS_SERVICE_ID,
+                import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+                templateParams,
+                import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+            );
+
+            // Log success for debugging
+            console.log("Email sent successfully", templateParams);
+
+            // Artificial delay for UX (minimum loading time)
             await new Promise(r => setTimeout(r, 1500));
 
             // Success
@@ -1545,7 +1554,7 @@ const RegistrationForm = () => {
             content: (
                 <div className="space-y-6">
                     <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 04: CHỌN MÔ_ĐUN</p>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {[
                             { key: 'Programming', label: 'Lập trình' },
                             { key: 'Robotics', label: 'Robot' },
@@ -1572,7 +1581,7 @@ const RegistrationForm = () => {
             content: (
                 <div className="space-y-8 text-center">
                     <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 05: XÁC THỰC DỮ LIỆU</p>
-                    <div className="border border-white/10 p-8 text-left space-y-4 font-mono text-sm bg-white/5 relative overflow-hidden">
+                    <div className="border border-white/10 p-4 md:p-8 text-left space-y-4 font-mono text-sm bg-white/5 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-1 bg-lime-400/20" />
                         <div className="flex justify-between border-b border-white/5 pb-2"><span>Họ và tên:</span> <span className="text-white">{formData.name}</span></div>
                         <div className="flex justify-between border-b border-white/5 pb-2"><span>Lớp:</span> <span className="text-white">{formData.class}</span></div>
@@ -2487,7 +2496,7 @@ const AlgorithmSection = () => {
                         <div className="overflow-hidden">
                             <ScrollReveal>
                                 <SkewScroll>
-                                    <h2 className="text-6xl md:text-7xl font-serif text-white mb-4 leading-[0.9]">
+                                    <h2 className="text-6xl md:text-7xl font-serif text-white mb-4 leading-tight">
                                         Phương <br /> <span className="text-lime-400">Pháp</span>
                                     </h2>
                                 </SkewScroll>
@@ -2565,10 +2574,18 @@ const TracksSection = () => {
         target: targetRef,
     });
 
-    const x = useTransform(scrollYProgress, [0, 1], ["1%", "-75%"]);
+    const x = useTransform(scrollYProgress, [0, 1], ["0%", "-85%"]);
     const bgPos = useTransform(scrollYProgress, [0, 1], ["0% 0%", "100% 0%"]);
 
     const [selectedTrack, setSelectedTrack] = useState(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const tracks = [
         {
@@ -2624,7 +2641,7 @@ const TracksSection = () => {
     ];
 
     return (
-        <section ref={targetRef} id="tracks" className="relative h-[300vh] bg-[#050505]">
+        <section ref={targetRef} id="tracks" className="relative h-auto md:h-[300vh] bg-[#050505]">
             {/* Parallax Background Grid */}
             <motion.div
                 style={{ backgroundPosition: bgPos }}
@@ -2632,13 +2649,13 @@ const TracksSection = () => {
             />
             <div className="absolute inset-0 bg-grid-white opacity-[0.05] z-0 pointer-events-none" />
 
-            <div className="sticky top-0 flex h-screen items-center overflow-hidden z-10">
-                <motion.div style={{ x }} className="flex gap-4 md:gap-12 px-4 md:px-24">
+            <div className="relative md:sticky top-0 flex flex-col md:flex-row h-auto md:h-screen items-start md:items-center overflow-hidden z-10 py-12 md:py-0">
+                <motion.div style={{ x: isMobile ? 0 : x }} className="flex flex-col md:flex-row gap-12 md:gap-4 px-4 md:px-24 w-full md:w-max">
                     {/* Intro Card */}
-                    <div className="min-w-[85vw] md:min-w-[400px] flex flex-col justify-center border-l border-white/10 pl-4 md:pl-12 backdrop-blur-sm">
+                    <div className="w-full md:w-auto md:shrink-0 flex flex-col justify-center border-l border-white/10 pl-4 md:pl-8 md:pr-12 backdrop-blur-sm mb-8 md:mb-0">
                         <span className="font-mono text-xs text-lime-400 mb-4 typing-effect">SELECT_MODULE</span>
                         <SkewScroll>
-                            <h2 className="text-6xl md:text-8xl font-serif leading-none mb-8 text-white mix-blend-difference">
+                            <h2 className="text-6xl md:text-8xl font-vietnam font-bold leading-tight mb-8 text-white">
                                 Chọn<br />Lối Đi<br /><span className="text-stroke text-transparent">Của Bạn</span>
                             </h2>
                         </SkewScroll>
@@ -2653,7 +2670,7 @@ const TracksSection = () => {
                         <motion.div
                             key={track.id}
                             layoutId={`card-${track.id}`}
-                            className="group relative h-[60vh] w-[85vw] md:w-[400px] bg-neutral-900 border border-white/10 flex flex-col cursor-pointer overflow-hidden"
+                            className="group relative h-[400px] md:h-[60vh] w-full md:w-[400px] md:shrink-0 bg-neutral-900 border border-white/10 flex flex-col cursor-pointer overflow-hidden"
                         >
                             {track.img ? (
                                 <motion.div layoutId={`img-${track.id}`} className="absolute inset-0">
