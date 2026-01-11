@@ -61,7 +61,7 @@ const ScrambleText = ({ text, className, hover = true }) => {
 };
 
 // CountUp Animation Component - animates from 0 to target value when in view
-const CountUp = ({ value, duration = 2000, className = "" }) => {
+const CountUp = ({ value, duration = 2000, delay = 0, className = "" }) => {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: "-100px" });
     const [displayValue, setDisplayValue] = useState(0);
@@ -72,11 +72,18 @@ const CountUp = ({ value, duration = 2000, className = "" }) => {
         let startTime = null;
         const startValue = 0;
         const endValue = value;
+        const delayMs = delay * 1000; // Convert seconds to ms
 
         const animate = (currentTime) => {
             if (!startTime) startTime = currentTime;
             const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+
+            if (elapsed < delayMs) {
+                requestAnimationFrame(animate);
+                return;
+            }
+
+            const progress = Math.min((elapsed - delayMs) / duration, 1);
 
             // Easing function for smooth animation
             const easeOutQuart = 1 - Math.pow(1 - progress, 4);
@@ -90,7 +97,7 @@ const CountUp = ({ value, duration = 2000, className = "" }) => {
         };
 
         requestAnimationFrame(animate);
-    }, [isInView, value, duration]);
+    }, [isInView, value, duration, delay]);
 
     return (
         <span ref={ref} className={className}>
@@ -3104,7 +3111,7 @@ const ProjectArchives = () => {
                                                         </div>
 
                                                         <div className="text-[10px] font-bold font-mono text-center text-white mb-0.5">
-                                                            <CountUp value={val} duration={1500} />%
+                                                            <CountUp value={val} duration={3000} delay={0.1 + idx * 0.1} />%
                                                         </div>
                                                         <div className="w-full bg-white/5 rounded-md relative overflow-hidden flex-1 shadow-inner">
                                                             <motion.div
