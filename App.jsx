@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useInView, AnimatePresence, useMotionValue, useSpring, useAnimationFrame, useVelocity } from 'framer-motion';
 import Lenis from 'lenis';
+import emailjs from '@emailjs/browser';
 import {
     Atom, Cpu, Code, Palette, Mic, ChevronDown, Check, Sparkles, Send,
     Rocket, Users, Award, Lightbulb, Target, ArrowRight, BookOpen,
