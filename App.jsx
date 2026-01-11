@@ -52,11 +52,61 @@ const ScrambleText = ({ text, className, hover = true }) => {
 
     return (
         <span
-            className={`font-mono ${className} ${hover ? 'cursor-pointer' : ''}`}
+            className={className}
             onMouseEnter={() => hover && setTrigger(prev => prev + 1)}
         >
             {display}
         </span>
+    );
+};
+
+const ValidationIcon = ({ status }) => {
+    // status: 'neutral', 'valid', 'invalid', 'spam'
+    // improved animation: clear overlap transition (smooth) instead of waiting
+    return (
+        <div className="relative w-6 h-6">
+            <AnimatePresence>
+                {status === 'valid' && (
+                    <motion.div
+                        key="valid"
+                        className="absolute inset-0 flex items-center justify-center"
+                        initial={{ scale: 0, rotate: -90, opacity: 0 }}
+                        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                        exit={{ scale: 0, rotate: 90, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                        <div className="absolute inset-0 bg-lime-400/20 rounded-full blur-md" />
+                        <Check className="text-lime-400 w-6 h-6 drop-shadow-[0_0_8px_rgba(163,230,53,1)] relative z-10" strokeWidth={3} />
+                    </motion.div>
+                )}
+                {status === 'invalid' && (
+                    <motion.div
+                        key="invalid"
+                        className="absolute inset-0 flex items-center justify-center"
+                        initial={{ scale: 0, rotate: 90, opacity: 0 }}
+                        animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                        exit={{ scale: 0, rotate: -90, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                        <div className="absolute inset-0 bg-red-500/20 rounded-full blur-md" />
+                        <X className="text-red-500 w-6 h-6 drop-shadow-[0_0_8px_rgba(239,68,68,1)] relative z-10" strokeWidth={3} />
+                    </motion.div>
+                )}
+                {status === 'spam' && (
+                    <motion.div
+                        key="spam"
+                        className="absolute inset-0 flex items-center justify-center"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 10 }}
+                    >
+                        <div className="absolute inset-0 bg-red-600/30 rounded-full blur-lg" />
+                        <Skull className="text-red-600 w-6 h-6 drop-shadow-[0_0_15px_rgba(255,0,0,1)] animate-pulse relative z-10" strokeWidth={3} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
     );
 };
 
@@ -258,41 +308,356 @@ const CustomCursor = () => {
 /*                              UI COMPONENTS                                   */
 /* ============================================================================ */
 
-const IntroSequence = ({ onComplete }) => {
+// TRON IDENTITY DISC 2.0 (Tech Demo Version - Refined)
+const IdentityDisc = ({ onExplode, fastMode = false }) => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
-        const timer = setInterval(() => {
+        if (fastMode) setProgress(80);
+
+        const interval = setInterval(() => {
             setProgress(prev => {
                 if (prev >= 100) {
-                    clearInterval(timer);
+                    clearInterval(interval);
+                    setTimeout(onExplode, fastMode ? 300 : 800);
                     return 100;
                 }
-                return prev + Math.floor(Math.random() * 5) + 1;
+                return prev + (fastMode ? 4 : 1);
             });
-        }, 50);
-        return () => clearInterval(timer);
+        }, fastMode ? 10 : 30);
+        return () => clearInterval(interval);
+    }, [fastMode, onExplode]);
+
+    return (
+        <div className="relative flex items-center justify-center z-50 perspective-[1000px]">
+            <motion.div
+                className="relative flex items-center justify-center"
+                style={{ transformStyle: "preserve-3d" }}
+                animate={{ rotateY: [0, 360], rotateX: [0, 10, 0] }} // Subtle global float
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+                {/* Gyroscopic Ring 1 - X Axis - Fast */}
+                <motion.div
+                    animate={{ rotateX: 360, rotateY: 45 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[280px] h-[280px] rounded-full border border-cyan-500/30 border-t-cyan-400 border-b-cyan-400"
+                    style={{ transformStyle: "preserve-3d" }}
+                />
+
+                {/* Gyroscopic Ring 2 - Y Axis - Slower */}
+                <motion.div
+                    animate={{ rotateY: 360, rotateX: -45 }}
+                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[260px] h-[260px] rounded-full border border-purple-500/30 border-l-purple-400 border-r-purple-400"
+                    style={{ transformStyle: "preserve-3d" }}
+                />
+
+                {/* Gyroscopic Ring 3 - Diagonal - Unique */}
+                <motion.div
+                    animate={{ rotateZ: 360, rotateX: 60 }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[220px] h-[220px] rounded-full border border-white/10 border-t-white/80 border-dashed"
+                    style={{ transformStyle: "preserve-3d" }}
+                />
+
+                {/* Main Outer Ring - Flat */}
+                <svg width="300" height="300" viewBox="0 0 100 100" className="animate-spin-slow relative z-10" style={{ animationDuration: '8s' }}>
+                    <defs>
+                        <linearGradient id="disc-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#00F0FF" stopOpacity="0" />
+                            <stop offset="50%" stopColor="#00F0FF" stopOpacity="1" />
+                            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#ffffff" strokeOpacity="0.05" strokeWidth="0.5" />
+                    <circle cx="50" cy="50" r="42" fill="none" stroke="#7000FF" strokeOpacity="0.1" strokeWidth="0.5" strokeDasharray="2 4" />
+                    <motion.circle
+                        cx="50" cy="50" r="45"
+                        fill="none"
+                        stroke="url(#disc-grad-2)"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0, rotate: -90 }}
+                        animate={{ pathLength: progress / 100 }}
+                        transition={{ ease: "linear" }}
+                        className="drop-shadow-[0_0_15px_#00F0FF]"
+                    />
+                </svg>
+
+                {/* Inner Ring (Counter-Rotate) - Technical Markers */}
+                <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute z-10"
+                >
+                    <svg width="180" height="180" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="48" fill="none" stroke="#00F0FF" strokeOpacity="0.3" strokeWidth="0.5" strokeDasharray="1 5" />
+                        <path d="M 50 2 L 52 5 L 48 5 Z" fill="#00F0FF" />
+                        <path d="M 50 98 L 52 95 L 48 95 Z" fill="#00F0FF" />
+                    </svg>
+                </motion.div>
+
+            </motion.div>
+
+            {/* Center Core - STATIC (Moved outside) */}
+            <div className="absolute text-center flex flex-col items-center justify-center w-32 h-32 bg-black/80 backdrop-blur-md rounded-full border border-white/10 shadow-[0_0_40px_rgba(0,240,255,0.2)] z-50">
+                <div className="text-[8px] font-mono text-cyan-500 tracking-[0.3em] mb-1 opacity-70 animate-pulse">SYSTEM</div>
+                <div className="text-4xl font-black font-mono text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
+                    {progress}<span className="text-sm align-top opacity-50">%</span>
+                </div>
+                {/* Data Processing Dots */}
+                <div className="mt-1 flex gap-1">
+                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
+                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, delay: 0.2, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
+                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, delay: 0.4, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
+                </div>
+            </div>
+        </div >
+    );
+};
+
+// DATA STREAM (Falling Matrix Code)
+const DataStream = () => {
+    const streams = Array.from({ length: 20 }); // 20 streams of code
+    return (
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden opacity-30">
+            {streams.map((_, i) => (
+                <motion.div
+                    key={i}
+                    className="absolute top-[-100%] text-[10px] font-mono text-cyan-500/40 writing-vertical-rl"
+                    style={{
+                        left: `${i * 5 + Math.random() * 2}%`,
+                        fontSize: `${Math.random() > 0.5 ? 10 : 14}px`,
+                    }}
+                    animate={{ top: "100%" }}
+                    transition={{
+                        duration: 5 + Math.random() * 5,
+                        repeat: Infinity,
+                        ease: "linear",
+                        delay: Math.random() * 5
+                    }}
+                >
+                    {Array.from({ length: 15 }).map(() => (Math.random() > 0.5 ? '1' : '0')).join('')}
+                </motion.div>
+            ))}
+        </div>
+    );
+};
+
+// PERSPECTIVE GRID (The Floor)
+const NeonGrid = ({ show }) => {
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: show ? 1 : 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 overflow-hidden pointer-events-none z-0"
+        >
+            <DataStream />
+            <div
+                className="absolute inset-0 w-[200vw] h-[200vh] -left-[50%] top-[-50%]"
+                style={{
+                    backgroundSize: '80px 80px',
+                    backgroundImage: `
+                        linear-gradient(to right, rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                        linear-gradient(to bottom, rgba(0, 240, 255, 0.1) 1px, transparent 1px)
+                    `,
+                    transform: 'perspective(500px) rotateX(60deg) translateY(0)',
+                    transformOrigin: '50% 100%',
+                    maskImage: 'linear-gradient(to top, rgba(0,0,0,1) 0%, transparent 60%)',
+                    animation: 'grid-move 10s linear infinite' // Add keyframe to index.css if missing or use framer
+                }}
+            />
+        </motion.div>
+    );
+};
+
+const TerminalBoot = ({ onDone }) => {
+    const [lines, setLines] = useState([]);
+    const bootText = [
+        "INITIALIZING CORE SYSTEM...",
+        "LOADING KERNEL MODULES [ROBOTICS, AI, DESIGN]...",
+        "> MTX_BRIDGE: CONNECTED",
+        "> NEURAL_ENGINE: OPTIMIZED",
+        "ESTABLISHING SECURE CONNECTION...",
+        "BYPASSING FIREWALL...",
+        "ACCESS GRANTED."
+    ];
+
+    useEffect(() => {
+        let isMounted = true;
+        let delay = 0;
+
+        bootText.forEach((line, index) => {
+            delay += Math.random() * 150 + 50;
+            setTimeout(() => {
+                if (!isMounted) return;
+                setLines(prev => [...prev, line]);
+                if (index === bootText.length - 1) {
+                    setTimeout(() => {
+                        if (isMounted) onDone();
+                    }, 500);
+                }
+            }, delay);
+        });
+
+        return () => { isMounted = false; };
     }, []);
 
     return (
-        <motion.div
-            className="fixed inset-0 z-[100] bg-[#020205] flex flex-col items-center justify-center font-mono"
-            initial={{ y: 0 }}
-            animate={progress === 100 ? { y: "-100%" } : { y: 0 }}
-            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1], delay: 0.2 }}
-            onAnimationComplete={onComplete}
-        >
-            <div className={`text-4xl font-bold mb-4 ${progress === 100 ? 'text-lime-400' : 'text-white'}`}>
-                {progress}%
+        <div className="absolute inset-0 flex items-end p-8 pb-32 md:pb-12 md:items-start font-mono text-xs md:text-base text-lime-400 z-10 pointer-events-none">
+            <div className="space-y-1 drop-shadow-[0_0_5px_rgba(163,230,53,0.5)]">
+                {lines.map((l, i) => (
+                    <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+                        <span className="text-white/30 mr-2">{`[${new Date().toLocaleTimeString()}]`}</span>
+                        <span className={i === lines.length - 1 ? "animate-pulse font-bold bg-lime-400/10 px-1" : ""}>{l}</span>
+                    </motion.div>
+                ))}
             </div>
-            <div className="w-64 h-1 bg-white/10 rounded-full overflow-hidden">
-                <div
-                    className="h-full bg-lime-400 transition-all duration-100 ease-out"
-                    style={{ width: `${progress}%` }}
+        </div>
+    );
+};
+
+const HolographicCore = ({ onExplode, fastMode = false }) => {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        // Fast Mode: Start at 90%
+        if (fastMode) {
+            setCount(90);
+        }
+
+        const interval = setInterval(() => {
+            setCount(prev => {
+                if (prev >= 100) {
+                    clearInterval(interval);
+                    setTimeout(onExplode, fastMode ? 200 : 500); // Faster explosion in fastMode
+                    return 100;
+                }
+                // Faster counting if in fastMode or near end
+                return prev + (fastMode ? 5 : 1);
+            });
+        }, fastMode ? 10 : 30);
+        return () => clearInterval(interval);
+    }, [fastMode, onExplode]);
+
+    return (
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+            <div className="relative">
+                {/* Orbitals - More Complex & Cool */}
+                <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-80px] border border-cyan-500/20 rounded-full border-t-cyan-400/50 border-r-transparent border-b-transparent border-l-transparent"
                 />
+                <motion.div
+                    animate={{ rotate: -360 }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-[-110px] border border-lime-500/10 rounded-full border-b-lime-400/50 border-l-transparent border-t-transparent border-r-transparent"
+                />
+
+                {/* Inner Pulse Ring */}
+                <div className="absolute inset-[-40px] border border-white/10 rounded-full animate-ping opacity-20" />
+
+                {/* Center Core */}
+                <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="w-40 h-40 bg-black/80 backdrop-blur-xl border border-lime-400/30 rounded-full flex flex-col items-center justify-center relative shadow-[0_0_100px_rgba(163,230,53,0.2)] overflow-hidden"
+                >
+                    <span className="text-white/30 text-[9px] tracking-[0.3em] mb-1">SYSTEM_CORE</span>
+                    <span className={`font-black text-5xl font-mono tracking-tighter ${count === 100 ? 'text-white drop-shadow-[0_0_10px_rgba(255,255,255,1)]' : 'text-lime-400'}`}>
+                        {count}%
+                    </span>
+
+                    {/* Scanline */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-lime-400/20 to-transparent animate-scan" style={{ backgroundSize: '100% 3px' }} />
+                </motion.div>
+
+                {/* Floating Icons */}
+                <motion.div animate={{ y: [0, -15, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }} className="absolute -top-32 left-1/2 -translate-x-1/2 text-cyan-400"><Atom size={32} /></motion.div>
+                <motion.div animate={{ y: [0, 15, 0], opacity: [0.5, 1, 0.5] }} transition={{ duration: 2.5, repeat: Infinity }} className="absolute -bottom-32 left-1/2 -translate-x-1/2 text-lime-400"><Cpu size={32} /></motion.div>
             </div>
-            <div className="mt-4 text-xs text-white/40">SYSTEM INITIALIZING...</div>
-        </motion.div>
+        </div>
+    );
+};
+
+const IntroSequence = ({ onComplete }) => {
+    const [phase, setPhase] = useState('boot'); // boot -> ignition -> complete
+    const [isFastBoot, setIsFastBoot] = useState(false);
+
+    useEffect(() => {
+        // FAILSAFE: Force complete after 8 seconds to prevent black screen stuck
+        const failsafe = setTimeout(() => {
+            onComplete();
+        }, 8000);
+
+        try {
+            const hasVisited = localStorage.getItem('stem_visited_v4'); // Switch to localStorage (Permanent)
+            if (hasVisited) {
+                console.log("Intro: Fast Boot (User Returned)");
+                setIsFastBoot(true);
+                setPhase('ignition');
+            } else {
+                console.log("Intro: Full Boot (First Visit)");
+                // DO NOT SET STORAGE HERE to avoid StrictMode double-mount issue
+            }
+        } catch (e) {
+            console.error("Storage access error:", e);
+        }
+
+        return () => clearTimeout(failsafe);
+    }, []);
+
+    const handleAnimationComplete = () => {
+        // Set visited flag in LOCAL STORAGE (Persists after tab close)
+        try {
+            localStorage.setItem('stem_visited_v4', 'true');
+        } catch (e) { }
+        onComplete();
+    };
+
+    return (
+        <AnimatePresence>
+            {phase !== 'complete' && (
+                <motion.div
+                    className="fixed inset-0 z-[100] bg-[#000508] overflow-hidden flex flex-col items-center justify-center"
+                    exit={{
+                        opacity: 0,
+                        clipPath: "circle(0% at 50% 50%)", // Iris close effect
+                        transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] }
+                    }}
+                >
+                    {/* Background Grid - Always present but fades in */}
+                    <NeonGrid show={true} />
+
+                    {/* The Identity Disc Loader */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ scale: 5, opacity: 0 }} // Expand out on exit
+                        transition={{ duration: 0.8 }}
+                    >
+                        <IdentityDisc
+                            fastMode={isFastBoot}
+                            onExplode={() => {
+                                setPhase('complete');
+                                handleAnimationComplete();
+                            }}
+                        />
+                    </motion.div>
+
+                    {/* System Status Text */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute bottom-12 font-mono text-[10px] text-cyan-500/50 tracking-widest uppercase"
+                    >
+                        {isFastBoot ? "Quick_Resume_Protocol_v4.2" : "Initializing_System_Grid..."}
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
 
@@ -411,7 +776,7 @@ const Navigation = () => {
                             onClick={() => setIsOpen(!isOpen)}
                             className="px-4 py-2 text-[10px] font-mono uppercase tracking-widest hover:text-cyan-400 transition-colors"
                         >
-                            {isOpen ? 'ĐÓNG' : <ScrambleText text="MENU" hover={false} />}
+                            {isOpen ? 'ĐÓNG' : <ScrambleText text="MENU" hover={false} className="font-mono" />}
                         </button>
                     </div>
 
@@ -503,6 +868,7 @@ const ParticleMesh = () => {
 
     useEffect(() => {
         const canvas = canvasRef.current;
+        if (!canvas) return; // PROPER NULL CHECK
         const ctx = canvas.getContext('2d');
         let width, height;
         let particles = [];
@@ -680,6 +1046,57 @@ const CinematicHero = () => {
                 </motion.div>
             </motion.div>
 
+            {/* FLOATING ICONS (Parallax & Magnetic) */}
+            <div className="absolute inset-0 z-10 pointer-events-none hidden md:block">
+                {/* 1. Atom (Science/Physics) - Top Left */}
+                <div className="absolute top-[20%] left-[15%]">
+                    <Magnetic strength={0.5}>
+                        <motion.div
+                            initial={{ opacity: 0, x: -50, scale: 0 }}
+                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                            transition={{ delay: 2.2, type: "spring" }}
+                            className="p-4 border border-cyan-400/30 rounded-full bg-cyan-900/10 backdrop-blur-md shadow-[0_0_30px_rgba(34,211,238,0.2)]"
+                        >
+                            <Atom size={40} className="text-cyan-400 animate-spin-slow" />
+                        </motion.div>
+                    </Magnetic>
+                </div>
+
+                {/* 2. CPU (Tech/AI) - Bottom Right */}
+                <div className="absolute bottom-[25%] right-[15%]">
+                    <Magnetic strength={0.8}>
+                        <motion.div
+                            initial={{ opacity: 0, x: 50, scale: 0 }}
+                            animate={{ opacity: 1, x: 0, scale: 1 }}
+                            transition={{ delay: 2.4, type: "spring" }}
+                            className="p-5 border border-lime-400/30 rounded-xl bg-lime-900/10 backdrop-blur-md shadow-[0_0_30px_rgba(163,230,53,0.2)]"
+                        >
+                            <Cpu size={40} className="text-lime-400" />
+                        </motion.div>
+                    </Magnetic>
+                </div>
+
+                {/* 3. Code (Decor) - Top Right */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2.6, duration: 1 }}
+                    className="absolute top-[15%] right-[25%] opacity-30 rotate-12"
+                >
+                    <Code size={120} className="text-white/5" />
+                </motion.div>
+
+                {/* 4. Globe (Decor) - Bottom Left */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 2.8, duration: 1 }}
+                    className="absolute bottom-[10%] left-[20%] opacity-20 -rotate-12"
+                >
+                    <Globe size={100} className="text-white/5" />
+                </motion.div>
+            </div>
+
             {/* Scroll Indicator */}
             <motion.div
                 initial={{ opacity: 0 }}
@@ -721,35 +1138,105 @@ const SectionDivider = ({ inverted = false }) => {
 
 const RegistrationForm = () => {
     const [step, setStep] = useState(0);
-    const [formData, setFormData] = useState({ name: '', class: '', email: '', track: '', contribution: '' });
-    const [touched, setTouched] = useState({ name: false, class: false, email: false, track: false, contribution: false });
+    const [formData, setFormData] = useState({ name: '', class: '', email: '', socialLink: '', track: '', contribution: '' });
+    const [touched, setTouched] = useState({ name: false, class: false, email: false, socialLink: false, track: false, contribution: false });
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // FIX: Add handleInput definition that was missing
+    const handleInput = (field, e) => {
+        let value = e.target.value;
+
+        // Auto-format Class: 10a1 -> 10A1
+        if (field === 'class') {
+            value = value.toUpperCase();
+        }
+
+        // Auto-format Name: Title Case
+        if (field === 'name') {
+            value = value.replace(/\b\w/g, c => c.toUpperCase());
+        }
+
+        setFormData({ ...formData, [field]: value });
+        if (touched[field]) {
+            validate(field, value);
+        }
+    };
+
+    const getStatus = (field) => {
+        if (!touched[field]) return 'neutral';
+        if (errors[field]) {
+            if (errors[field].includes('SYSTEM:') || errors[field].includes('SECURITY ALERT:')) return 'spam';
+            return 'invalid';
+        }
+        return 'valid';
+    };
 
     const validate = (field, value) => {
         let newErrors = { ...errors };
 
+        // --- HEURISTIC ENGINES ---
+        const isSpam = (text) => {
+            if (!text) return false;
+            // 1. Consonant Clusters (e.g., "fdsfsd") - 5+ consonants in a row
+            const consonantCluster = /[bcdfghjklmnpqrstvwxyz]{5,}/i;
+            // 2. Keyboard Mash (e.g., "asdfgh") - Common linear patterns (simplified)
+            const mashPattern = /(asdf|hjkl|qwer|zxcv|1234|7890)/i;
+            // 3. Repetitive Chars (e.g., "aaaaa") - 4+ same chars
+            const repetitive = /(.)\1{3,}/;
+
+            return consonantCluster.test(text) || mashPattern.test(text) || repetitive.test(text);
+        };
+
+        const isProfane = (text) => {
+            if (!text) return false;
+            // Basic blacklist + simple variations
+            const blacklist = ['nigga', 'nigger', 'faggot', 'retard', 'cc', 'clmm', 'dmm', 'loz', 'kak', 'buoi', 'lol', 'occho', 'ngu', 'cho', 'dien'];
+            const lower = text.toLowerCase().replace(/[^a-z]/g, ''); // Strip symbols to catch "n.i.g.g.a"
+            return blacklist.some(word => lower.includes(word));
+        };
+
         if (field === 'name') {
-            const nameRegex = /^[a-zA-Z\s\u00C0-\u1EF9]+$/; // Letters, spaces, and Vietnamese characters
-            if (!value) newErrors.name = 'Vui lòng nhập tên của bạn';
-            else if (!nameRegex.test(value)) newErrors.name = 'Tên chỉ chứa chữ cái';
+            const basicRegex = /^[a-zA-Z\s\u00C0-\u1EF9]+$/;
+            const twoWordsRegex = /^\S+\s+\S+/;
+
+            if (!value) newErrors.name = 'DỮ LIỆU TRỐNG // REQUIRED';
+            else if (isProfane(value)) newErrors.name = '⚠️ SECURITY ALERT: NGÔN TỪ KHÔNG PHÙ HỢP';
+            else if (isSpam(value)) newErrors.name = '⚠️ SYSTEM: PHÁT HIỆN SPAM/VÔ NGHĨA';
+            else if (!basicRegex.test(value)) newErrors.name = 'LỖI CÚ PHÁP: CHỈ CHẤP NHẬN CHỮ CÁI';
+            else if (!twoWordsRegex.test(value)) newErrors.name = 'YÊU CẦU: HỌ VÀ TÊN (TỐI THIỂU 2 TỪ)';
             else delete newErrors.name;
         }
+
         if (field === 'class') {
-            const classRegex = /^(10|11|12)[A-Za-z][0-9]*$/; // e.g., 10a1, 12b, 11c2
-            if (!value) newErrors.class = 'Vui lòng nhập lớp';
-            else if (!classRegex.test(value)) newErrors.class = 'Định dạng lớp: 10A1, 11B...';
+            const strictClassRegex = /^(10|11|12)[A-Z0-9]*$/;
+
+            if (!value) newErrors.class = 'DỮ LIỆU TRỐNG // REQUIRED';
+            else if (isProfane(value)) newErrors.class = '⚠️ SECURITY ALERT: NGÔN TỪ KHÔNG PHÙ HỢP';
+            else if (isSpam(value)) newErrors.class = '⚠️ SYSTEM: PHÁT HIỆN SPAM';
+            else if (!/^(10|11|12)/.test(value)) newErrors.class = 'LỖI LOGIC: CHỈ KHỐI 10, 11, HOẶC 12';
+            else if (!strictClassRegex.test(value)) newErrors.class = 'ĐỊNH DẠNG SAI: VÍ DỤ 10A1, 11B2';
             else delete newErrors.class;
         }
+
         if (field === 'email') {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!value) newErrors.email = 'Vui lòng nhập địa chỉ email';
-            else if (!emailRegex.test(value)) newErrors.email = 'Email không hợp lệ';
+            if (!value) newErrors.email = 'DỮ LIỆU TRỐNG // REQUIRED';
+            else if (isProfane(value) || isSpam(value)) newErrors.email = '⚠️ SYSTEM: EMAIL KHÔNG HỢP LỆ';
+            else if (!emailRegex.test(value)) newErrors.email = 'LỖI KẾT NỐI: EMAIL KHÔNG HỢP LỆ';
             else delete newErrors.email;
         }
-        if (field === 'track') {
-            if (!value) newErrors.track = 'Vui lòng chọn ban';
-            else delete newErrors.track;
+
+        if (field === 'socialLink') {
+            // Optional field, but if entered must be valid URL
+            const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+            if (value && !urlRegex.test(value)) {
+                newErrors.socialLink = 'LỖI KẾT NỐI: LINK KHÔNG HỢP LỆ';
+            } else if (value && isProfane(value)) {
+                newErrors.socialLink = '⚠️ SECURITY ALERT: LINK ĐỘC HẠI';
+            } else {
+                delete newErrors.socialLink;
+            }
         }
 
         setErrors(newErrors);
@@ -764,18 +1251,25 @@ const RegistrationForm = () => {
     const nextStep = () => {
         let isValid = true;
         if (step === 0) {
-            isValid = validate('name', formData.name) && validate('class', formData.class);
-            if (!formData.name) { setTouched(prev => ({ ...prev, name: true })); isValid = false; }
-            if (!formData.class) { setTouched(prev => ({ ...prev, class: true })); isValid = false; }
+            const nameValid = validate('name', formData.name);
+            const classValid = validate('class', formData.class);
+            isValid = nameValid && classValid;
+
+            setTouched(prev => ({ ...prev, name: true, class: true }));
         } else if (step === 1) {
-            isValid = validate('email', formData.email);
-            if (!formData.email) { setTouched(prev => ({ ...prev, email: true })); isValid = false; }
-        } else if (step === 2) {
-            // Step 2 is now Contribution (Optional), so always valid or check limits
-            isValid = true;
+            const emailValid = validate('email', formData.email);
+            // Social Link is optional, but if it has error (invalid format), block next
+            const socialValid = !errors.socialLink;
+            isValid = emailValid && socialValid;
+
+            setTouched(prev => ({ ...prev, email: true, socialLink: true }));
         }
 
         if (isValid) setStep(prev => prev + 1);
+        else {
+            // Trigger Shake/Glitch Effect globally or on specific field?
+            // For now, simple logic ensures error state is set
+        }
     };
 
     const prevStep = () => setStep(prev => prev - 1);
@@ -798,6 +1292,7 @@ const RegistrationForm = () => {
             from_name: formData.name,
             from_class: formData.class,
             from_email: formData.email,
+            social_link: formData.socialLink || "Không có",
             selected_track: trackMap[formData.track],
             contribution: formData.contribution || "Không có",
             submission_id: Math.random().toString(36).substr(2, 9).toUpperCase(),
@@ -830,35 +1325,64 @@ const RegistrationForm = () => {
             content: (
                 <div className="space-y-8">
                     <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 01: KHỞI TẠO HỒ SƠ</p>
-                    <div className="group">
-                        <label className="block text-xs font-mono text-white/50 mb-2">DANH TÍNH (Họ và Tên) {errors.name && <span className="text-red-500 ml-2">[{errors.name}]</span>}</label>
+
+                    {/* Name Input */}
+                    <div className="group relative">
+                        <label className="flex justify-between text-xs font-mono text-white/50 mb-2">
+                            <span>DANH TÍNH (Họ và Tên)</span>
+                            {errors.name && touched.name && (
+                                <span className="text-red-500 font-bold animate-pulse">
+                                    [!ERR] {errors.name}
+                                </span>
+                            )}
+                        </label>
                         <input
                             type="text"
-                            className={`form-input text-2xl ${errors.name && touched.name ? 'text-red-400 border-red-500/50 animate-shake' : ''}`}
-                            placeholder="Nguyễn Văn A"
+                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                                ${errors.name && touched.name
+                                    ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                                    : touched.name && !errors.name
+                                        ? 'border-lime-400 text-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                                        : 'border-white/20 text-white focus:border-lime-400'
+                                }`}
+                            placeholder="NGUYEN VAN A"
                             value={formData.name}
-                            onChange={e => {
-                                setFormData({ ...formData, name: e.target.value });
-                                if (touched.name) validate('name', e.target.value);
-                            }}
+                            onChange={(e) => handleInput('name', e)}
                             onBlur={() => handleBlur('name')}
                         />
-                        <div className={`input-underline ${errors.name && touched.name ? 'bg-red-500/50' : ''}`} />
+                        <div className="absolute right-4 bottom-4">
+                            <ValidationIcon status={getStatus('name')} />
+                        </div>
                     </div>
-                    <div className="group">
-                        <label className="block text-xs font-mono text-white/50 mb-2">LỚP {errors.class && <span className="text-red-500 ml-2">[{errors.class}]</span>}</label>
+
+                    {/* Class Input */}
+                    <div className="group relative">
+                        <label className="flex justify-between text-xs font-mono text-white/50 mb-2">
+                            <span>ĐƠN VỊ (Lớp)</span>
+                            {errors.class && touched.class && (
+                                <span className="text-red-500 font-bold animate-pulse">
+                                    [!ERR] {errors.class}
+                                </span>
+                            )}
+                        </label>
                         <input
                             type="text"
-                            className={`form-input text-2xl ${errors.class && touched.class ? 'text-red-400 border-red-500/50 animate-shake' : ''}`}
+                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                                ${errors.class && touched.class
+                                    ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                                    : touched.class && !errors.class
+                                        ? 'border-lime-400 text-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                                        : 'border-white/20 text-white focus:border-lime-400'
+                                }`}
                             placeholder="10A1"
                             value={formData.class}
-                            onChange={e => {
-                                setFormData({ ...formData, class: e.target.value });
-                                if (touched.class) validate('class', e.target.value);
-                            }}
+                            onChange={(e) => handleInput('class', e)}
                             onBlur={() => handleBlur('class')}
+                        // maxLength={5} REMOVED: too restrictive
                         />
-                        <div className={`input-underline ${errors.class && touched.class ? 'bg-red-500/50' : ''}`} />
+                        <div className="absolute right-4 bottom-4">
+                            <ValidationIcon status={getStatus('class')} />
+                        </div>
                     </div>
                 </div>
             )
@@ -869,20 +1393,62 @@ const RegistrationForm = () => {
             content: (
                 <div className="space-y-8">
                     <p className="font-mono text-sm text-lime-400 mb-4">/// BƯỚC 02: KÊNH LIÊN LẠC</p>
-                    <div className="group">
-                        <label className="block text-xs font-mono text-white/50 mb-2">ĐỊA CHỈ EMAIL {errors.email && <span className="text-red-500 ml-2">[{errors.email}]</span>}</label>
+                    <div className="group relative">
+                        <label className="flex justify-between text-xs font-mono text-white/50 mb-2">
+                            <span>ĐỊA CHỈ EMAIL</span>
+                            {errors.email && touched.email && (
+                                <span className="text-red-500 font-bold animate-pulse">
+                                    [!ERR] {errors.email}
+                                </span>
+                            )}
+                        </label>
                         <input
                             type="email"
-                            className={`form-input text-2xl ${errors.email && touched.email ? 'text-red-400 border-red-500/50 animate-shake' : ''}`}
+                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                                ${errors.email && touched.email
+                                    ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                                    : touched.email && !errors.email
+                                        ? 'border-lime-400 text-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                                        : 'border-white/20 text-white focus:border-lime-400'
+                                }`}
                             placeholder="email@example.com"
                             value={formData.email}
-                            onChange={e => {
-                                setFormData({ ...formData, email: e.target.value });
-                                if (touched.email) validate('email', e.target.value);
-                            }}
+                            onChange={(e) => handleInput('email', e)}
                             onBlur={() => handleBlur('email')}
                         />
-                        <div className={`input-underline ${errors.email && touched.email ? 'bg-red-500/50' : ''}`} />
+                        <div className="absolute right-4 bottom-4">
+                            <ValidationIcon status={getStatus('email')} />
+                        </div>
+                    </div>
+
+                    {/* Social Link Input */}
+                    <div className="group relative">
+                        <label className="flex justify-between text-xs font-mono text-white/50 mb-2">
+                            <span>MẠNG XÃ HỘI (Facebook/Instagram - Tùy chọn)</span>
+                            {errors.socialLink && touched.socialLink && (
+                                <span className="text-red-500 font-bold animate-pulse">
+                                    [!ERR] {errors.socialLink}
+                                </span>
+                            )}
+                        </label>
+                        <input
+                            type="text"
+                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                                ${errors.socialLink && touched.socialLink
+                                    ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
+                                    : touched.socialLink && !errors.socialLink && formData.socialLink
+                                        ? 'border-lime-400 text-lime-400 shadow-[0_0_15px_rgba(163,230,53,0.3)]'
+                                        : 'border-white/20 text-white focus:border-lime-400'
+                                }`}
+                            placeholder="https://facebook.com/..."
+                            value={formData.socialLink}
+                            onChange={(e) => handleInput('socialLink', e)}
+                            onBlur={() => handleBlur('socialLink')}
+                        />
+                        <div className="absolute right-4 bottom-4">
+                            {/* Only show icon if user has typed something */}
+                            {formData.socialLink && <ValidationIcon status={getStatus('socialLink')} />}
+                        </div>
                     </div>
                 </div>
             ),

@@ -4,6 +4,61 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .animate-spin-slow {
+        animation: spin 8s linear infinite;
+    }
+
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .animate-float-delayed {
+        animation: float 6s ease-in-out infinite 3s;
+    }
+
+    .animate-scan {
+        animation: scan 2s linear infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+
+    @keyframes scan {
+        0% {
+            background-position: 0% 0%;
+        }
+
+        100% {
+            background-position: 0% 100%;
+        }
+    }
+
+    @keyframes grid-move {
+        0% {
+            transform: perspective(500px) rotateX(60deg) translateY(0);
+        }
+
+        100% {
+            transform: perspective(500px) rotateX(60deg) translateY(80px);
+        }
+    }
+
+    .writing-vertical-rl {
+        writing-mode: vertical-rl;
+        text-orientation: upright;
+    }
+}
+
 :root {
     --bg-dark: #020205;
     --accent-cyan: #00f0ff;
