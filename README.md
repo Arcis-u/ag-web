@@ -3,7 +3,7 @@
 <div align="center">
 
 ![STEM Club Banner](https://img.shields.io/badge/STEM-Club-00f0ff?style=for-the-badge&logo=react&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.0.0-ccff00?style=for-the-badge)
+![Version](https://img.shields.io/badge/version-1.1.0-ccff00?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-purple?style=for-the-badge)
 
 **Cổng đăng ký thành viên CLB STEM với giao diện hiện đại, hiệu ứng cinematic**
