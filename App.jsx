@@ -60,6 +60,45 @@ const ScrambleText = ({ text, className, hover = true }) => {
     );
 };
 
+// CountUp Animation Component - animates from 0 to target value when in view
+const CountUp = ({ value, duration = 2000, className = "" }) => {
+    const ref = useRef(null);
+    const isInView = useInView(ref, { once: true, margin: "-100px" });
+    const [displayValue, setDisplayValue] = useState(0);
+
+    useEffect(() => {
+        if (!isInView) return;
+
+        let startTime = null;
+        const startValue = 0;
+        const endValue = value;
+
+        const animate = (currentTime) => {
+            if (!startTime) startTime = currentTime;
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // Easing function for smooth animation
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const currentValue = Math.floor(startValue + (endValue - startValue) * easeOutQuart);
+
+            setDisplayValue(currentValue);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    }, [isInView, value, duration]);
+
+    return (
+        <span ref={ref} className={className}>
+            {displayValue}
+        </span>
+    );
+};
+
 const ValidationIcon = ({ status }) => {
     // status: 'neutral', 'valid', 'invalid', 'spam'
     // improved animation: clear overlap transition (smooth) instead of waiting
@@ -3064,7 +3103,9 @@ const ProjectArchives = () => {
                                                             {label}
                                                         </div>
 
-                                                        <div className="text-[10px] font-bold font-mono text-center text-white mb-0.5">{val}%</div>
+                                                        <div className="text-[10px] font-bold font-mono text-center text-white mb-0.5">
+                                                            <CountUp value={val} duration={1500} />%
+                                                        </div>
                                                         <div className="w-full bg-white/5 rounded-md relative overflow-hidden flex-1 shadow-inner">
                                                             <motion.div
                                                                 className={`absolute bottom-0 w-full rounded-md transition-all duration-1000 ${stat === 'PWR' ? 'bg-gradient-to-t from-cyan-600 to-cyan-400' : stat === 'AI' ? 'bg-gradient-to-t from-purple-600 to-purple-400' : 'bg-gradient-to-t from-lime-600 to-lime-400'}`}
@@ -3161,7 +3202,7 @@ const StatsSection = () => {
                         <div className="absolute inset-0 border border-white/5 scale-90 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-300" />
                         <div className="font-mono text-xs text-white/30 mb-2">DỮ_LIỆU_0{i + 1}</div>
                         <div className="text-5xl md:text-7xl font-black text-white group-hover:text-lime-400 transition-colors flex justify-center items-center">
-                            <ScrambleCounter value={stat.val} />{stat.suff}
+                            <CountUp value={stat.val} duration={2500} />{stat.suff}
                         </div>
                         <div className="text-sm font-bold tracking-widest mt-2">{stat.label}</div>
                     </div>
@@ -3236,18 +3277,39 @@ const Footer = () => {
 
                     {/* Column 3: Social - Better Spacing */}
                     <div className="md:col-span-12 flex gap-6 items-center mt-8"> {/* Adjusted to span full width and added margin-top */}
-                        {['Facebook', 'Discord', 'Github'].map((social) => (
-                            <Magnetic key={social} strength={0.3}>
-                                <a href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300">
-                                    {/* Icons based on social name, reusing existing imports if needed, or generic */}
-                                    <div className="scale-75">
-                                        {social === 'Facebook' && <Globe size={24} />}
-                                        {social === 'Discord' && <MessageSquare size={24} />}
-                                        {social === 'Github' && <Code size={24} />}
-                                    </div>
-                                </a>
-                            </Magnetic>
-                        ))}
+                        {/* Facebook Icon with Link */}
+                        <Magnetic strength={0.3}>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61584400577309"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300 group"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    className="w-5 h-5 group-hover:scale-110 transition-transform"
+                                >
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                            </a>
+                        </Magnetic>
+                        {/* Discord Icon */}
+                        <Magnetic strength={0.3}>
+                            <a href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300">
+                                <div className="scale-75">
+                                    <MessageSquare size={24} />
+                                </div>
+                            </a>
+                        </Magnetic>
+                        {/* Github Icon */}
+                        <Magnetic strength={0.3}>
+                            <a href="#" className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300">
+                                <div className="scale-75">
+                                    <Code size={24} />
+                                </div>
+                            </a>
+                        </Magnetic>
                     </div>
                 </div>
 
