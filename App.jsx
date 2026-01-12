@@ -354,9 +354,10 @@ const CustomCursor = () => {
 /*                              UI COMPONENTS                                   */
 /* ============================================================================ */
 
-// TRON IDENTITY DISC 2.0 (Tech Demo Version - Refined)
+// TRON IDENTITY DISC 2.0 (Redesigned - Tech Demo Version)
 const IdentityDisc = ({ onExplode, fastMode = false }) => {
     const [progress, setProgress] = useState(0);
+    const [scanLine, setScanLine] = useState(0);
 
     useEffect(() => {
         if (fastMode) setProgress(80);
@@ -368,97 +369,148 @@ const IdentityDisc = ({ onExplode, fastMode = false }) => {
                     setTimeout(onExplode, fastMode ? 300 : 800);
                     return 100;
                 }
-                return prev + (fastMode ? 4 : 1);
+                // Non-linear progress for "realism"
+                const increment = fastMode ? 4 : (Math.random() * 1.5 + 0.5);
+                return Math.min(prev + increment, 100);
             });
         }, fastMode ? 10 : 30);
+
         return () => clearInterval(interval);
     }, [fastMode, onExplode]);
 
     return (
-        <div className="relative flex items-center justify-center z-50 perspective-[1000px]">
+        <div className="relative flex items-center justify-center z-50 perspective-[2000px] scale-125 md:scale-150">
+            {/* Complex Gyroscopic System */}
             <motion.div
                 className="relative flex items-center justify-center"
                 style={{ transformStyle: "preserve-3d" }}
-                animate={{ rotateY: [0, 360], rotateX: [0, 10, 0] }} // Subtle global float
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                animate={{
+                    rotateY: [0, 360],
+                    rotateX: [0, 15, -15, 0],
+                    scale: [1, 1.05, 1]
+                }}
+                transition={{
+                    rotateY: { duration: 25, repeat: Infinity, ease: "linear" },
+                    rotateX: { duration: 10, repeat: Infinity, ease: "easeInOut" },
+                    scale: { duration: 4, repeat: Infinity, ease: "easeInOut" }
+                }}
             >
-                {/* Gyroscopic Ring 1 - X Axis - Fast */}
+                {/* 1. Primary Outer Shell - Cyan */}
                 <motion.div
-                    animate={{ rotateX: 360, rotateY: 45 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                    className="absolute w-[280px] h-[280px] rounded-full border border-cyan-500/30 border-t-cyan-400 border-b-cyan-400"
+                    animate={{ rotateX: 360, rotateZ: 20 }}
+                    transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[280px] h-[280px] rounded-full border border-cyan-500/20 border-t-cyan-400 border-b-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.1)]"
+                    style={{ transformStyle: "preserve-3d" }}
+                >
+                    <div className="absolute inset-0 rounded-full border border-dashed border-white/5 opacity-50" />
+                </motion.div>
+
+                {/* 2. Secondary Flux Ring - Purple */}
+                <motion.div
+                    animate={{ rotateY: -360, rotateX: 60 }}
+                    transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[240px] h-[240px] rounded-full border border-purple-500/30 border-l-purple-400 border-r-purple-400"
                     style={{ transformStyle: "preserve-3d" }}
                 />
 
-                {/* Gyroscopic Ring 2 - Y Axis - Slower */}
+                {/* 3. Data Stream Ring - White/Lime */}
                 <motion.div
-                    animate={{ rotateY: 360, rotateX: -45 }}
-                    transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                    className="absolute w-[260px] h-[260px] rounded-full border border-purple-500/30 border-l-purple-400 border-r-purple-400"
+                    animate={{ rotateZ: -360, rotateY: 30 }}
+                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                    className="absolute w-[300px] h-[300px] rounded-full border-[0.5px] border-white/10"
                     style={{ transformStyle: "preserve-3d" }}
-                />
+                >
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 bg-lime-400 rounded-full blur-[1px] shadow-[0_0_10px_lime]" />
+                </motion.div>
 
-                {/* Gyroscopic Ring 3 - Diagonal - Unique */}
+                {/* 4. Scanning Grid - Holographic */}
                 <motion.div
-                    animate={{ rotateZ: 360, rotateX: 60 }}
-                    transition={{ duration: 7, repeat: Infinity, ease: "linear" }}
-                    className="absolute w-[220px] h-[220px] rounded-full border border-white/10 border-t-white/80 border-dashed"
+                    className="absolute w-[200px] h-[200px] rounded-full overflow-hidden opacity-30 bg-cyan-900/10"
                     style={{ transformStyle: "preserve-3d" }}
-                />
+                >
+                    <motion.div
+                        animate={{ top: ['0%', '100%', '0%'] }}
+                        transition={{ duration: 3, ease: 'linear', repeat: Infinity }}
+                        className="absolute w-full h-[2px] bg-cyan-400 shadow-[0_0_15px_cyan]"
+                    />
+                    <div className="w-full h-full bg-[linear-gradient(transparent_2px,rgba(0,0,0,0.5)_2px)] bg-[size:100%_4px]" />
+                </motion.div>
 
-                {/* Main Outer Ring - Flat */}
-                <svg width="300" height="300" viewBox="0 0 100 100" className="animate-spin-slow relative z-10" style={{ animationDuration: '8s' }}>
+                {/* Main Progress Ring (SVG) */}
+                <svg width="220" height="220" viewBox="0 0 100 100" className="animate-spin-slow relative z-10" style={{ animationDuration: '15s' }}>
                     <defs>
-                        <linearGradient id="disc-grad-2" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient id="disc-grad-v2" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" stopColor="#00F0FF" stopOpacity="0" />
                             <stop offset="50%" stopColor="#00F0FF" stopOpacity="1" />
-                            <stop offset="100%" stopColor="#00F0FF" stopOpacity="0" />
+                            <stop offset="100%" stopColor="#A3E635" stopOpacity="1" />
                         </linearGradient>
+                        <filter id="glow-v2">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
+                            <feMerge>
+                                <feMergeNode in="coloredBlur" />
+                                <feMergeNode in="SourceGraphic" />
+                            </feMerge>
+                        </filter>
                     </defs>
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#ffffff" strokeOpacity="0.05" strokeWidth="0.5" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#7000FF" strokeOpacity="0.1" strokeWidth="0.5" strokeDasharray="2 4" />
+
+                    {/* Background Track */}
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="#ffffff" strokeOpacity="0.05" strokeWidth="0.5" />
+                    <path d="M 50 2 A 48 48 0 0 1 98 50" fill="none" stroke="#22d3ee" strokeOpacity="0.2" strokeWidth="0.5" strokeDasharray="2 4" />
+                    <path d="M 50 98 A 48 48 0 0 1 2 50" fill="none" stroke="#a3e635" strokeOpacity="0.2" strokeWidth="0.5" strokeDasharray="2 4" />
+
+                    {/* Progress Arc */}
                     <motion.circle
-                        cx="50" cy="50" r="45"
+                        cx="50" cy="50" r="46"
                         fill="none"
-                        stroke="url(#disc-grad-2)"
-                        strokeWidth="2"
+                        stroke="url(#disc-grad-v2)"
+                        strokeWidth="2.5"
                         strokeLinecap="round"
+                        filter="url(#glow-v2)"
                         initial={{ pathLength: 0, rotate: -90 }}
                         animate={{ pathLength: progress / 100 }}
                         transition={{ ease: "linear" }}
-                        className="drop-shadow-[0_0_15px_#00F0FF]"
                     />
                 </svg>
 
-                {/* Inner Ring (Counter-Rotate) - Technical Markers */}
-                <motion.div
-                    animate={{ rotate: -360 }}
-                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                    className="absolute z-10"
-                >
-                    <svg width="180" height="180" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="48" fill="none" stroke="#00F0FF" strokeOpacity="0.3" strokeWidth="0.5" strokeDasharray="1 5" />
-                        <path d="M 50 2 L 52 5 L 48 5 Z" fill="#00F0FF" />
-                        <path d="M 50 98 L 52 95 L 48 95 Z" fill="#00F0FF" />
-                    </svg>
-                </motion.div>
+                {/* Inner Identification Core */}
+                <div className="absolute z-20 w-[140px] h-[140px] rounded-full bg-black/80 backdrop-blur-xl border border-white/10 flex flex-col items-center justify-center overflow-hidden shadow-[inset_0_0_20px_rgba(0,0,0,1)]">
+                    {/* Background Data Rain */}
+                    <div className="absolute inset-0 opacity-20 overflow-hidden">
+                        {[...Array(5)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute text-[8px] font-mono text-cyan-400 leading-none"
+                                style={{ left: `${i * 20 + 10}%` }}
+                                animate={{ top: ['-20%', '120%'] }}
+                                transition={{ duration: Math.random() * 2 + 1, repeat: Infinity, ease: 'linear', delay: i * 0.2 }}
+                            >
+                                010101
+                            </motion.div>
+                        ))}
+                    </div>
 
+                    <div className="relative z-10 flex flex-col items-center">
+                        <motion.div
+                            initial={{ scale: 0.5, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-white/50 tracking-tighter"
+                        >
+                            {Math.floor(progress)}<span className="text-[10px] text-lime-400">%</span>
+                        </motion.div>
+
+                        <div className="flex gap-1 mt-1">
+                            <div className="w-1 h-3 bg-cyan-500 rounded-full animate-pulse" style={{ animationDelay: '0s' }} />
+                            <div className="w-1 h-4 bg-cyan-400 rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} />
+                            <div className="w-1 h-2 bg-lime-400 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                        </div>
+
+                        <div className="mt-2 text-[8px] font-mono text-white/40 tracking-wider">
+                            {progress < 30 ? "CALIBRATING..." : progress < 70 ? "ANALYZING..." : "VERIFYING..."}
+                        </div>
+                    </div>
+                </div>
             </motion.div>
-
-            {/* Center Core - STATIC (Moved outside) */}
-            <div className="absolute text-center flex flex-col items-center justify-center w-32 h-32 bg-black/80 backdrop-blur-md rounded-full border border-white/10 shadow-[0_0_40px_rgba(0,240,255,0.2)] z-50">
-                <div className="text-[8px] font-mono text-cyan-500 tracking-[0.3em] mb-1 opacity-70 animate-pulse">SYSTEM</div>
-                <div className="text-4xl font-black font-mono text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]">
-                    {progress}<span className="text-sm align-top opacity-50">%</span>
-                </div>
-                {/* Data Processing Dots */}
-                <div className="mt-1 flex gap-1">
-                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
-                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, delay: 0.2, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
-                    <motion.div animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, delay: 0.4, repeat: Infinity }} className="w-1 h-1 bg-cyan-400 rounded-full" />
-                </div>
-            </div>
-        </div >
+        </div>
     );
 };
 
@@ -699,7 +751,7 @@ const IntroSequence = ({ onComplete }) => {
                         animate={{ opacity: 1, y: 0 }}
                         className="absolute bottom-12 font-mono text-[10px] text-cyan-500/50 tracking-widest uppercase"
                     >
-                        {isFastBoot ? "Quick_Resume_Protocol_v4.2" : "Initializing_System_Grid..."}
+                        {isFastBoot ? "KHỞI_ĐỘNG_NHANH_PROTOCOL" : "NHẬN_DẠNG ĐỒNG_BỘ_V2.0..."}
                     </motion.div>
                 </motion.div>
             )}
