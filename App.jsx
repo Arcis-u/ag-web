@@ -7,7 +7,7 @@ import {
     Rocket, Users, Award, Lightbulb, Target, ArrowRight, BookOpen,
     FlaskConical, Trophy, HelpCircle, MessageSquare, Quote, Zap, Menu, X,
     Terminal, Globe, Activity, Layers, Database, Hash, Crosshair, Layout, Wrench, RotateCw, Skull,
-    Fingerprint, Search, Gamepad2
+    Fingerprint, Search, Gamepad2, Lock
 } from 'lucide-react';
 
 // Images
@@ -2062,6 +2062,7 @@ const CyberGameSection = () => {
             <div className="max-w-6xl w-full z-10 relative">
                 <AnimatePresence mode="wait">
                     {/* INTRO */}
+                    {/* INTRO - V3 PREMIUM */}
                     {gameState === 'INTRO' && (
                         <motion.div
                             key="intro"
@@ -2069,37 +2070,75 @@ const CyberGameSection = () => {
                             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                             exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
                             transition={{ duration: 0.8 }}
-                            className="text-center"
+                            className="text-center relative z-20"
                         >
+                            {/* Central Fingerprint Scanner V3 */}
                             <div className="mb-12 relative inline-flex items-center justify-center">
-                                <div className="absolute inset-0 border border-dashed border-lime-400/30 rounded-full animate-[spin_20s_linear_infinite]" />
-                                <div className="absolute inset-[-20px] border border-lime-400/10 rounded-full animate-[spin_15s_linear_infinite_reverse] scale-110" />
-                                <div className="w-56 h-56 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 relative overflow-hidden group cursor-pointer" onClick={() => setGameState('PLAYING')}>
-                                    <div className="absolute inset-0 bg-lime-400/20 scale-0 group-hover:scale-100 transition-transform duration-700 ease-out rounded-full" />
-                                    <Fingerprint size={80} strokeWidth={1} className="text-lime-400 relative z-10 group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-full h-[2px] bg-lime-400/50 blur-[2px] animate-[scan_2s_linear_infinite]" />
-                                    </div>
+                                {/* Rotating multiple rings */}
+                                <div className="absolute inset-[-40px] border border-dashed border-lime-500/20 rounded-full animate-[spin_20s_linear_infinite]" />
+                                <div className="absolute inset-[-20px] border border-lime-400/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                                <div className="absolute inset-0 border border-t-lime-400 border-r-transparent border-b-lime-400 border-l-transparent rounded-full animate-spin-slow" />
+
+                                {/* Core */}
+                                <div
+                                    className="w-48 h-48 rounded-full bg-[#050505] flex items-center justify-center border border-white/10 relative overflow-hidden group cursor-pointer shadow-[0_0_50px_rgba(132,204,22,0.15)] hover:shadow-[0_0_80px_rgba(132,204,22,0.3)] transition-all duration-500"
+                                    onClick={() => setGameState('PLAYING')}
+                                >
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-lime-400/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                                    {/* Scanline */}
+                                    <div className="absolute inset-0 w-full h-[2px] bg-lime-400/50 blur-[1px] animate-[scan_1.5s_linear_infinite]" />
+                                    <div className="absolute inset-0 w-full h-[20px] bg-lime-400/10 animate-[scan_1.5s_linear_infinite]" />
+
+                                    <Fingerprint size={64} strokeWidth={1} className="text-lime-400 relative z-10 group-hover:scale-110 transition-transform duration-500 opacity-80" />
+
+                                    {/* Tech details */}
+                                    <div className="absolute top-8 text-[8px] font-mono text-lime-400/50">SCAN_ID</div>
+                                    <div className="absolute bottom-8 text-[8px] font-mono text-lime-400/50">READY</div>
                                 </div>
                             </div>
 
-                            <h2 className="text-7xl md:text-9xl font-black text-white mb-6 tracking-normal leading-tight mix-blend-screen">
-                                NHẬN_DẠNG<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400">ĐỒNG_BỘ_V2.0</span>
-                            </h2>
-                            <p className="text-white/50 font-mono text-lg max-w-xl mx-auto mb-12">
-                                Khởi tạo bắt tay thần kinh nâng cao. <br />
-                                Hệ thống sẽ phân tích các mô hình nhận thức của bạn để xác định phân loại hoạt động tối ưu.
-                            </p>
+                            {/* Title Block */}
+                            <div className="mb-8 space-y-2">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-none"
+                                >
+                                    NHÂN_DẠNG
+                                </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400 tracking-tighter leading-none"
+                                >
+                                    ĐỒNG_BỘ_V2.0
+                                </motion.div>
+                            </div>
 
-                            <Magnetic strength={0.5}>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="text-white/40 font-mono text-sm uppercase tracking-widest max-w-2xl mx-auto mb-16 leading-7"
+                            >
+                                <span className="block mb-2">Khởi tạo bắt tay thần kinh nâng cao.</span>
+                                Hệ thống sẽ phân tích các mô hình nhận thức của bạn <br />
+                                để xác định phân loại hoạt động tối ưu.
+                            </motion.p>
+
+                            <Magnetic strength={0.4}>
                                 <button
                                     onClick={() => setGameState('PLAYING')}
-                                    className="relative px-16 py-6 group overflow-hidden bg-white/5 border border-white/10 rounded-full hover:border-lime-400/50 transition-all duration-500"
+                                    className="group relative px-12 py-5 bg-[#0a0a0a] border border-white/10 rounded-full hover:border-lime-400 transition-all duration-300 overflow-hidden"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-lime-400/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                    <span className="relative font-bold font-mono text-xl text-white group-hover:text-lime-400 flex items-center gap-3">
-                                        BẮT_ĐẦU_PHÂN_TÍCH <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </span>
+                                    <div className="absolute inset-0 bg-lime-400/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                    <div className="relative flex items-center gap-4 font-black font-mono text-lg text-white group-hover:text-lime-400 transition-colors">
+                                        <span>BẮT_ĐẦU_PHÂN_TÍCH</span>
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </div>
                                 </button>
                             </Magnetic>
                         </motion.div>
@@ -2117,7 +2156,6 @@ const CyberGameSection = () => {
                             {/* Improved HUD */}
                             <div className="flex justify-between items-center mb-16 pb-6 border-b border-white/10 relative">
                                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime-400/50 to-transparent" />
-
                                 <div className="flex items-center gap-6">
                                     <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 relative overflow-hidden">
                                         <span className="font-mono font-bold text-2xl text-lime-400 relative z-10">0{currentScenario + 1}</span>
@@ -2141,8 +2179,6 @@ const CyberGameSection = () => {
                                 </div>
                             </div>
 
-
-
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentScenario}
@@ -2162,66 +2198,71 @@ const CyberGameSection = () => {
                                     </div>
 
                                     <div className="grid md:grid-cols-2 gap-6">
-                                        {scenarios[currentScenario].options.map((opt, i) => (
-                                            <TiltCard key={i} className="h-full" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
-                                                <button
-                                                    onClick={() => handleOptionClick(opt.type, i)}
-                                                    disabled={isTransitioning}
-                                                    className={`w-full h-full p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group ${selectedOption === i
-                                                        ? 'bg-lime-500/10 border-lime-500' // Selected state
-                                                        : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10' // Normal state
-                                                        } ${isTransitioning && selectedOption !== i ? 'opacity-50 blur-sm' : ''}`} // Dim others
-                                                >
-                                                    {/* Selected Ripple/Fill Effect */}
-                                                    {selectedOption === i && (
-                                                        <motion.div
-                                                            layoutId="selection-ring"
-                                                            className="absolute inset-0 border-2 border-lime-400 rounded-2xl pointer-events-none"
-                                                            initial={{ opacity: 0 }}
-                                                            animate={{ opacity: 1 }}
-                                                            transition={{ duration: 0.2 }}
-                                                        />
-                                                    )}
-                                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-
-                                                    <div className="relative z-10 flex items-start gap-6">
-                                                        <div className={`
-                                                        p-5 rounded-xl border transition-all duration-500
-                                                        ${selectedOption === i
-                                                                ? 'bg-lime-400 text-black border-lime-400 rotate-12 scale-110'
-                                                                : `bg-black/50 ${opt.color} border-white/10 group-hover:scale-110 group-hover:rotate-6`
+                                        {scenarios[currentScenario].options.map((opt, i) => {
+                                            const isSelected = selectedOption === i;
+                                            return (
+                                                <TiltCard key={i} className="h-full" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
+                                                    <button
+                                                        onClick={() => handleOptionClick(opt.type, i)}
+                                                        disabled={isTransitioning}
+                                                        className={`w-full h-full p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group
+                                                        ${isSelected
+                                                                ? 'bg-lime-500/10 border-lime-500' // Selected state
+                                                                : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10' // Normal state
                                                             }
-                                                    `}>
+                                                        ${isTransitioning && selectedOption !== i ? 'opacity-50 blur-sm' : ''}`} // Dim others
+                                                    >
+                                                        {/* Selected Ripple/Fill Effect */}
+                                                        {isSelected && (
                                                             <motion.div
-                                                                animate={selectedOption === i ? { rotate: 360 } : {}}
-                                                                whileHover={{ scale: 1.2, rotate: 10 }} // Added subtle hover animation
-                                                                transition={{ duration: 0.5 }}
-                                                            >
-                                                                <opt.icon size={32} strokeWidth={1.5} />
-                                                            </motion.div>
+                                                                layoutId="selection-ring"
+                                                                className="absolute inset-0 border-2 border-lime-400 rounded-2xl pointer-events-none"
+                                                                initial={{ opacity: 0 }}
+                                                                animate={{ opacity: 1 }}
+                                                                transition={{ duration: 0.2 }}
+                                                            />
+                                                        )}
+                                                        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
+                                                        <div className="relative z-10 flex items-start gap-6">
+                                                            <div className={`
+                                                            p-5 rounded-xl border transition-all duration-500
+                                                            ${isSelected
+                                                                    ? 'bg-lime-400 text-black border-lime-400 rotate-12 scale-110'
+                                                                    : `bg-black/50 ${opt.color} border-white/10 group-hover:scale-110 group-hover:rotate-6`
+                                                                }
+                                                        `}>
+                                                                <motion.div
+                                                                    animate={isSelected ? { rotate: 360 } : {}}
+                                                                    whileHover={{ scale: 1.2, rotate: 10 }} // Added subtle hover animation
+                                                                    transition={{ duration: 0.5 }}
+                                                                >
+                                                                    <opt.icon size={32} strokeWidth={1.5} />
+                                                                </motion.div>
+                                                            </div>
+                                                            <div className="flex-1">
+                                                                <div className="flex justify-between items-start mb-2">
+                                                                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
+                                                                    {isSelected && <Check size={16} className="text-lime-400" />}
+                                                                </div>
+                                                                <div className={`text-xl font-bold transition-colors duration-300 ${isSelected ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
+                                                                    {opt.label}
+                                                                </div>
+                                                            </div>
                                                         </div>
 
-                                                        <div className="flex-1">
-                                                            <div className="flex justify-between items-start mb-2">
-                                                                <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
-                                                                {selectedOption === i && <Check size={16} className="text-lime-400" />}
-                                                            </div>
-                                                            <div className={`text-xl font-bold transition-colors duration-300 ${selectedOption === i ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
-                                                                {opt.label}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20 group-hover:border-lime-400/50 transition-colors" />
-                                                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20 group-hover:border-lime-400/50 transition-colors" />
-                                                </button>
-                                            </TiltCard>
-                                        ))}
+                                                        <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20 group-hover:border-lime-400/50 transition-colors" />
+                                                        <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20 group-hover:border-lime-400/50 transition-colors" />
+                                                    </button>
+                                                </TiltCard>
+                                            );
+                                        })}
                                     </div>
                                 </motion.div>
                             </AnimatePresence>
                         </motion.div>
                     )}
+
 
                     {/* ANALYZING */}
                     {/* ANALYZING */}
@@ -2231,26 +2272,31 @@ const CyberGameSection = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center min-h-[60vh] w-full relative max-w-4xl mx-auto"
+                            className="flex flex-col items-center justify-center min-h-[60vh] w-full relative max-w-5xl mx-auto"
                         >
-                            {/* Terminal Window Frame */}
-                            <div className="w-full bg-black/80 border border-white/10 rounded-xl overflow-hidden backdrop-blur-md relative shadow-2xl">
+                            {/* Terminal Window Frame V3 */}
+                            <div className="w-full bg-[#050505]/90 border border-white/10 rounded-xl overflow-hidden backdrop-blur-xl relative shadow-[0_0_50px_rgba(0,0,0,0.5)] group">
                                 {/* Window Header */}
-                                <div className="h-8 bg-white/5 border-b border-white/5 flex items-center px-4 justify-between">
+                                <div className="h-10 bg-white/5 border-b border-white/5 flex items-center px-6 justify-between select-none">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                                        <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                                        <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                                        <div className="w-3 h-3 rounded-full bg-red-500/80 shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-yellow-500/80 shadow-[0_0_8px_rgba(234,179,8,0.5)]" />
+                                        <div className="w-3 h-3 rounded-full bg-green-500/80 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />
                                     </div>
-                                    <div className="text-[10px] font-mono text-white/30 tracking-widest">SYSTEM_DIAGNOSTIC_TOOL_V9.0</div>
+                                    <div className="text-[10px] font-mono text-white/30 tracking-[0.2em] flex items-center gap-2">
+                                        <Lock size={10} />
+                                        SYSTEM_DIAGNOSTIC_TOOL_V9.0
+                                    </div>
                                 </div>
 
-                                <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                                    {/* Background Grid */}
-                                    <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
+                                <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-12 relative min-h-[400px]">
+                                    {/* Background Grid & Scanline */}
+                                    <div className="absolute inset-0 bg-[linear-gradient(rgba(132,204,22,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(132,204,22,0.03)_1px,transparent_1px)] bg-[size:30px_30px] pointer-events-none" />
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(0,255,0,0.05),transparent_70%)] pointer-events-none" />
+                                    <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent via-lime-400/5 to-transparent animate-[scan_3s_linear_infinite] pointer-events-none" />
 
-                                    {/* Left: Code Log Stream */}
-                                    <div className="col-span-2 space-y-2 font-mono text-xs relative z-10 h-64 overflow-hidden mask-linear-fade">
+                                    {/* Left: Code Log Stream V3 using Typewriter effect logic */}
+                                    <div className="col-span-2 space-y-3 font-mono text-xs relative z-10 h-[320px] overflow-hidden mask-linear-fade">
                                         {[
                                             "KHỞI_TẠO_BOOT_SEQUENCE...",
                                             "ĐANG_TẢI_KERNEL_THẦN_KINH...",
@@ -2271,256 +2317,266 @@ const CyberGameSection = () => {
                                             <motion.div
                                                 key={i}
                                                 initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: [0, 1, 0.5] }}
-                                                transition={{ duration: 0.2, delay: i * 0.15 }}
-                                                className="text-lime-400/80 flex gap-2"
+                                                animate={{ opacity: [0, 1, 0.4] }}
+                                                transition={{ duration: 0.3, delay: i * 0.12 }}
+                                                className="text-lime-400 font-medium flex gap-3 items-center border-l-2 border-transparent hover:border-lime-400/50 pl-2 transition-colors ml-0"
                                             >
-                                                <span className="text-white/30">[{new Date().toLocaleTimeString()}:{Math.floor(Math.random() * 99)}]</span>
-                                                {log}
+                                                <span className="text-white/20 text-[10px]">[{new Date().toLocaleTimeString()}:{Math.floor(Math.random() * 99)}]</span>
+                                                <span className="tracking-wide">{log}</span>
                                             </motion.div>
                                         ))}
                                         <motion.div
                                             animate={{ opacity: [0, 1, 0] }}
-                                            transition={{ duration: 0.5, repeat: Infinity }}
-                                            className="w-3 h-5 bg-lime-400 inline-block align-middle"
+                                            transition={{ duration: 0.8, repeat: Infinity }}
+                                            className="w-2 h-4 bg-lime-400 inline-block align-middle shadow-[0_0_10px_lime]"
                                         />
                                     </div>
 
-                                    {/* Right: Analysis Viz */}
-                                    <div className="space-y-4 relative z-10 font-mono text-xs">
-                                        <div className="flex justify-between items-center text-white/50 mb-2 border-b border-white/10 pb-1">
-                                            <span>MỤC_TIÊU_XÁC_ĐỊNH</span>
-                                            <span>TRẠNG_THÁI</span>
+                                    {/* Right: Analysis Viz & Radar */}
+                                    <div className="space-y-6 relative z-10 font-mono text-xs flex flex-col justify-between">
+
+                                        {/* Central Radar Animation (recreating screenshot center element) */}
+                                        <div className="absolute top-1/2 left-[-60px] -translate-y-1/2 w-40 h-40 border border-lime-400/20 rounded-full flex items-center justify-center opacity-50 pointer-events-none hidden lg:flex">
+                                            <div className="w-full h-full border border-dashed border-lime-400/30 rounded-full animate-[spin_10s_linear_infinite]" />
+                                            <div className="absolute inset-2 border border-dotted border-lime-400/20 rounded-full animate-[spin_8s_linear_infinite_reverse]" />
+                                            <div className="absolute w-full h-[1px] bg-lime-400/40 animate-[spin_2s_linear_infinite] origin-center shadow-[0_0_10px_lime]" />
+                                            <div className="w-2 h-2 bg-lime-400 rounded-full shadow-[0_0_15px_lime]" />
                                         </div>
 
-                                        {Object.entries(tracks).map(([key, track], idx) => {
-                                            const currentScore = scores[key];
-                                            const maxScore = Math.max(...Object.values(scores));
-                                            const isTie = Object.values(scores).filter(s => s === maxScore).length > 1;
-                                            // Only highlight if it's the winner AND there is no tie
-                                            const isWinner = !isTie && result === key;
+                                        <div className="flex justify-between items-center text-white/50 mb-2 border-b border-white/10 pb-2">
+                                            <span className="tracking-wider text-[10px]">MỤC_TIÊU_XÁC_ĐỊNH</span>
+                                            <span className="tracking-wider text-[10px]">TRẠNG_THÁI</span>
+                                        </div>
 
-                                            // Determine bar color and status text based on whether it's the winner
-                                            const getStatusColor = () => {
-                                                if (isWinner) return "text-lime-400";
-                                                return "text-white/30";
-                                            };
+                                        <div className="space-y-4">
+                                            {Object.entries(tracks).map(([key, track], idx) => {
+                                                const currentScore = scores[key];
+                                                const maxScore = Math.max(...Object.values(scores));
+                                                const isTie = Object.values(scores).filter(s => s === maxScore).length > 1;
+                                                const isWinner = !isTie && result === key;
 
-                                            const getStatusText = () => {
-                                                if (isWinner) return "KẾT NỐI AN TOÀN";
-                                                if (isTie && currentScore === maxScore) return "TÍN HIỆU CAO..."; // Special text for ties?
-                                                return "TÍN HIỆU YẾU...";
-                                            };
+                                                return (
+                                                    <motion.div
+                                                        key={key}
+                                                        className={`relative p-3 rounded-md transition-all duration-500 ${isWinner
+                                                            ? 'bg-lime-400/10 border border-lime-400/40 shadow-[0_0_20px_rgba(132,204,22,0.15)] z-20'
+                                                            : 'border border-transparent opacity-50 blur-[0.5px]'
+                                                            }`}
+                                                        initial={{ opacity: 0, x: 20 }}
+                                                        animate={{ opacity: isWinner ? 1 : 0.5, x: 0, scale: isWinner ? 1.05 : 1 }}
+                                                        transition={{ delay: 1 + idx * 0.2 }}
+                                                    >
+                                                        <div className="flex justify-between items-end mb-2">
+                                                            <span className={`font-bold tracking-widest text-[10px] uppercase ${isWinner ? 'text-lime-300' : 'text-white/40'}`}>
+                                                                {track.subtitle}
+                                                            </span>
+                                                            <span className="text-[9px]">
+                                                                {isWinner ? (
+                                                                    <span className="text-lime-400 font-bold animate-pulse shadow-lime-400 drop-shadow-md">
+                                                                        KẾT NỐI [OK]
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className="text-white/20 animate-pulse">
+                                                                        QUÉT...
+                                                                    </span>
+                                                                )}
+                                                            </span>
+                                                        </div>
 
-                                            return (
-                                                <motion.div
-                                                    key={key}
-                                                    className={`relative p-3 rounded-lg transition-all duration-500 ${isWinner
-                                                        ? 'bg-lime-400/10 border border-lime-400/50 shadow-[0_0_20px_rgba(163,230,53,0.2)] scale-105 z-10'
-                                                        : 'border border-transparent opacity-60'
-                                                        }`}
-                                                    initial={{ opacity: 0, x: 20 }}
-                                                    animate={{ opacity: isWinner ? 1 : 0.6, x: 0 }}
-                                                    transition={{ delay: 0.5 + idx * 0.2 }}
-                                                >
-                                                    <div className="flex justify-between items-end mb-1">
-                                                        <span className={`font-bold tracking-widest ${isWinner ? 'text-lime-300' : 'text-white/40'}`}>
-                                                            {track.subtitle}
-                                                        </span>
-                                                        <span className={`${getStatusColor()} text-[9px]`}>
+                                                        {/* Progress Bar Container V3 */}
+                                                        <div className="h-1 w-full bg-[#111] rounded-sm overflow-hidden relative">
                                                             {isWinner ? (
-                                                                <span className="text-lime-400 font-bold animate-pulse">
-                                                                    KẾT NỐI AN TOÀN [OK]
-                                                                </span>
+                                                                <motion.div
+                                                                    className="h-full bg-lime-400 shadow-[0_0_15px_rgba(132,204,22,0.8)] relative"
+                                                                    initial={{ width: "0%" }}
+                                                                    animate={{ width: "100%" }}
+                                                                    transition={{ duration: 2, ease: "circOut", delay: 1.5 }}
+                                                                >
+                                                                    <div className="absolute right-0 top-0 bottom-0 w-[2px] bg-white shadow-[0_0_10px_white]" />
+                                                                </motion.div>
                                                             ) : (
-                                                                <span className="animate-pulse">
-                                                                    {isTie && currentScore === maxScore ? "TIỀM NĂNG [?]" : "ĐANG QUÉT..."}
-                                                                </span>
+                                                                <motion.div
+                                                                    className={`h-full bg-white/20`}
+                                                                    animate={{
+                                                                        width: ["0%", "40%", "20%", "50%", "10%"],
+                                                                        opacity: [0.2, 0.4, 0.1]
+                                                                    }}
+                                                                    transition={{ duration: 3, ease: "linear", repeat: Infinity }}
+                                                                />
                                                             )}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Progress Bar Container */}
-                                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden relative">
-                                                        {/* Animated Bar */}
-                                                        {isWinner ? (
-                                                            // Winner Animation: Fills to 100% and turns Green
-                                                            <motion.div
-                                                                className="h-full bg-lime-400 shadow-[0_0_10px_rgba(163,230,53,0.5)]"
-                                                                initial={{ width: "0%" }}
-                                                                animate={{ width: "100%" }}
-                                                                transition={{ duration: 2.5, ease: "circOut", delay: 0.5 }}
-                                                            />
-                                                        ) : (
-                                                            // Others (or Ties): Fluctuate randomly
-                                                            <motion.div
-                                                                className={`h-full ${track.bg.replace('bg-', 'bg-')} opacity-40`}
-                                                                initial={{ width: "0%" }}
-                                                                animate={{
-                                                                    width: currentScore === maxScore && isTie
-                                                                        ? ["40%", "60%", "50%", "70%"] // Ties fluctuate higher
-                                                                        : ["0%", "60%", "20%", "40%", "10%"], // Low scores fluctuate lower
-                                                                    opacity: [0.4, 0.6, 0.2]
-                                                                }}
-                                                                transition={{ duration: 3, ease: "linear", repeat: 0 }}
-                                                            />
-                                                        )}
-                                                    </div>
-
-                                                    {/* Selection Marker */}
-                                                    {isWinner && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, scale: 0 }}
-                                                            animate={{ opacity: 1, scale: 1 }}
-                                                            transition={{ delay: 3 }}
-                                                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_8px_#a3e635]"
-                                                        />
-                                                    )}
-                                                </motion.div>
-                                            )
-                                        })}
+                                                        </div>
+                                                    </motion.div>
+                                                )
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <h3 className="text-2xl text-white font-bold mt-8 glitch-text animate-pulse decoration-clone" data-text="PROCESSING_NEURAL_LINK...">
-                                PROCESSING_NEURAL_LINK...
-                            </h3>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 2 }}
+                                className="mt-8 flex items-center gap-3"
+                            >
+                                <div className="w-2 h-2 bg-lime-400 rounded-full animate-ping" />
+                                <h3 className="text-xl text-lime-400 font-mono font-bold tracking-[0.2em] animate-pulse">
+                                    PROCESSING_NEURAL_LINK...
+                                </h3>
+                            </motion.div>
                         </motion.div>
                     )}
 
-                    {/* RESULT */}
-                    {gameState === 'RESULT' && (
-                        <motion.div
-                            key="result"
-                            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                            transition={{ type: "spring", stiffness: 50 }}
-                            className="w-full max-w-5xl mx-auto"
-                        >
-                            <SpotlightItem className="relative bg-[#050505] border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
-                                {/* Top Decoration */}
-                                <div className={`h-2 w-full bg-gradient-to-r ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'} opacity-50`} />
+                    {/* RESULT (V3 PREMIUM) */}
+                    {
+                        gameState === 'RESULT' && (
+                            <motion.div
+                                key="result"
+                                initial={{ opacity: 0, scale: 0.9, y: 50 }}
+                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
+                                transition={{ type: "spring", stiffness: 50 }}
+                                className="w-full max-w-6xl mx-auto"
+                            >
+                                <TiltCard className="relative bg-[#080808] border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl group">
+                                    <div className={`absolute inset-0 bg-gradient-to-br ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'} opacity-5`} />
 
-                                <div className="p-8 md:p-16 relative z-10 grid md:grid-cols-12 gap-16">
-                                    {/* Left: Identity Card */}
-                                    <div className="md:col-span-5 relative">
-                                        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-2xl -m-4 transform -rotate-2" />
-                                        <div className={`relative p-8 rounded-2xl bg-black border ${tracks[result].border} text-center overflow-hidden`}>
-                                            {/* Holographic BG */}
-                                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                                            <div className={`absolute -top-20 -right-20 w-40 h-40 ${tracks[result].bg} blur-[60px] opacity-40`} />
-
-                                            {/* Icon */}
-                                            <div className={`w-32 h-32 mx-auto rounded-full ${tracks[result].bg} bg-opacity-20 flex items-center justify-center mb-8 border-2 ${tracks[result].border} shadow-[0_0_30px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500`}>
-                                                {(() => {
-                                                    const Icon = tracks[result].icon;
-                                                    return <Icon size={64} className={tracks[result].color} />;
-                                                })()}
-                                            </div>
-
-                                            <div className="font-mono text-[10px] text-white/40 mb-3 tracking-[0.2em]">XÁC_NHẬN_DANH_TÍNH</div>
-                                            <h2 className={`text-4xl md:text-5xl font-black uppercase leading-tight mb-4 ${tracks[result].color}`}>
-                                                {tracks[result].title}
-                                            </h2>
-                                            <div className="inline-block px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-bold text-white tracking-widest uppercase border border-white/5">
-                                                {tracks[result].subtitle}
-                                            </div>
-                                        </div>
+                                    {/* Top Decoration Bar */}
+                                    <div className="h-2 w-full flex">
+                                        <div className={`flex-1 bg-gradient-to-r ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'}`} />
+                                        <div className="w-32 bg-black/50 backdrop-blur-sm" />
+                                        <div className={`flex-1 bg-gradient-to-l ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'}`} />
                                     </div>
 
-                                    {/* Right: Stats & Action */}
-                                    <div className="md:col-span-7 flex flex-col justify-center">
-                                        <div className="mb-8">
-                                            <h3 className="font-mono text-sm text-lime-400 mb-4 uppercase tracking-widest flex items-center gap-2"> {/* Increased margin-bottom */}
-                                                <Activity size={14} /> Phân Tích Thần Kinh Hoàn Tất
-                                            </h3>
-                                            <p className="text-2xl text-white/80 font-light leading-loose"> {/* Changed relaxed to loose */}
-                                                "{tracks[result].desc}"
-                                            </p>
+                                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay pointer-events-none" />
+
+                                    <div className="p-8 md:p-12 relative z-10 grid md:grid-cols-12 gap-12 items-center">
+                                        {/* Left: Identity Card V3 */}
+                                        <div className="md:col-span-5 relative perspective-1000">
+                                            <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent rounded-3xl -m-4 transform -rotate-3 blur-sm" />
+                                            <TiltCard className={`
+                                                            relative p-10 rounded-3xl bg-[#0a0a0a] border-2 ${tracks[result].border} text-center overflow-hidden
+                                                            shadow-[0_0_50px_rgba(0,0,0,0.5)] transform transition-transform duration-700 hover:scale-105
+                                                        `}>
+                                                {/* Holographic Sheen */}
+                                                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                                                <div className={`absolute -top-32 -right-32 w-64 h-64 ${tracks[result].bg} blur-[80px] opacity-20 animate-pulse`} />
+
+                                                {/* Icon V3 */}
+                                                <div className={`w-40 h-40 mx-auto rounded-full ${tracks[result].bg} bg-opacity-10 flex items-center justify-center mb-10 border border-white/10 relative shadow-inner group-hover:shadow-[0_0_30px_inherit]`}>
+                                                    <div className="absolute inset-0 rounded-full border border-dashed border-white/20 animate-spin-slow" />
+                                                    {(() => {
+                                                        const Icon = tracks[result].icon;
+                                                        return <Icon size={80} className={`${tracks[result].color} drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]`} />;
+                                                    })()}
+                                                </div>
+
+                                                <div className="font-mono text-[10px] text-white/30 mb-4 tracking-[0.3em] uppercase">Mã_Định_Danh</div>
+                                                <h2 className={`text-4xl md:text-5xl font-black uppercase leading-[0.9] mb-6 ${tracks[result].color} mix-blend-screen`}>
+                                                    {tracks[result].title}
+                                                </h2>
+                                                <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/5 rounded-full text-[10px] font-bold text-white tracking-[0.2em] uppercase border border-white/5 backdrop-blur-sm">
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${tracks[result].bg.replace('bg-', 'bg-')}`} />
+                                                    {tracks[result].subtitle}
+                                                </div>
+                                            </TiltCard>
                                         </div>
 
-                                        <div className="space-y-5 mb-12">
-                                            {Object.entries(scores).map(([key, val], idx) => (
-                                                <motion.div
-                                                    key={key}
-                                                    initial={{ opacity: 0, x: -20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.5 + (idx * 0.1) }}
+                                        {/* Right: Stats & Action */}
+                                        <div className="md:col-span-7 flex flex-col justify-center">
+                                            <div className="mb-8">
+                                                <h3 className="font-mono text-sm text-lime-400 mb-4 uppercase tracking-widest flex items-center gap-2">
+                                                    <Activity size={14} /> Phân Tích Thần Kinh Hoàn Tất
+                                                </h3>
+                                                <p className="text-2xl text-white/80 font-light leading-loose">
+                                                    "{tracks[result].desc}"
+                                                </p>
+                                            </div>
+
+                                            <div className="space-y-5 mb-12">
+                                                {Object.entries(scores).map(([key, val], idx) => (
+                                                    <motion.div
+                                                        key={key}
+                                                        initial={{ opacity: 0, x: -20 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        transition={{ delay: 0.5 + (idx * 0.1) }}
+                                                    >
+                                                        <div className="flex justify-between text-[10px] font-bold text-white mb-2 uppercase tracking-wider">
+                                                            <span>{key}</span>
+                                                            <span className="text-xs text-lime-400">SECURE CONNECTION ESTABLISHED</span>
+                                                        </div>
+                                                        <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                            <motion.div
+                                                                initial={{ width: 0 }}
+                                                                animate={{ width: `${Math.min(100, (val / 5) * 100)}%` }}
+                                                                transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
+                                                                className={`h-full ${tracks[key] ? tracks[key].bg : 'bg-white'} shadow-[0_0_10px_currentColor]`}
+                                                            />
+                                                        </div>
+                                                    </motion.div>
+                                                ))}
+                                            </div>
+
+                                            <div className="flex gap-4">
+                                                <button
+                                                    onClick={() => document.getElementById('apply').scrollIntoView({ behavior: 'smooth' })}
+                                                    className="flex-1 py-5 bg-lime-400 hover:bg-lime-300 text-black font-black font-mono text-sm uppercase transition-all hover:scale-105 shadow-[0_0_30px_rgba(163,230,53,0.3)] flex items-center justify-center gap-3 rounded-lg"
                                                 >
-                                                    <div className="flex justify-between text-[10px] font-bold text-white mb-2 uppercase tracking-wider">
-                                                        <span>{key}</span>
-                                                        <span className="text-xs text-lime-400">SECURE CONNECTION ESTABLISHED</span>
-                                                    </div>
-                                                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                        <motion.div
-                                                            initial={{ width: 0 }}
-                                                            animate={{ width: `${Math.min(100, (val / 5) * 100)}%` }}
-                                                            transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
-                                                            className={`h-full ${tracks[key] ? tracks[key].bg : 'bg-white'} shadow-[0_0_10px_currentColor]`}
-                                                        />
-                                                    </div>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <button
-                                                onClick={() => document.getElementById('apply').scrollIntoView({ behavior: 'smooth' })}
-                                                className="flex-1 py-5 bg-lime-400 hover:bg-lime-300 text-black font-black font-mono text-sm uppercase transition-all hover:scale-105 shadow-[0_0_30px_rgba(163,230,53,0.3)] flex items-center justify-center gap-3 rounded-lg"
-                                            >
-                                                Khởi Chạy Chuỗi <ArrowRight size={18} />
-                                            </button>
-                                            <button
-                                                onClick={handleRecalibrate}
-                                                className="px-8 py-5 border border-white/20 hover:bg-white/5 text-white font-mono text-xs uppercase transition-all hover:scale-105 hover:border-lime-400/50 rounded-lg group"
-                                            >
-                                                <span className="flex items-center gap-2 align-middle">
-                                                    <RotateCw size={16} className="group-hover:rotate-180 transition-transform duration-700" />
-                                                    Tái Hiệu Chỉnh
-                                                </span>
-                                            </button>
+                                                    Khởi Chạy Chuỗi <ArrowRight size={18} />
+                                                </button>
+                                                <button
+                                                    onClick={handleRecalibrate}
+                                                    className="px-8 py-5 border border-white/20 hover:bg-white/5 text-white font-mono text-xs uppercase transition-all hover:scale-105 hover:border-lime-400/50 rounded-lg group"
+                                                >
+                                                    <span className="flex items-center gap-2 align-middle">
+                                                        <RotateCw size={16} className="group-hover:rotate-180 transition-transform duration-700" />
+                                                        Tái Hiệu Chỉnh
+                                                    </span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </SpotlightItem>
-                        </motion.div>
-                    )}
+                                </TiltCard>
+                            </motion.div>
+                        )
+                    }
 
-                    {/* NEW RESETTING STATE */}
-                    {gameState === 'RESETTING' && (
-                        <motion.div
-                            key="resetting"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center h-[60vh] relative z-50"
-                        >
-                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                            <div className="relative z-10 flex flex-col items-center">
-                                <motion.div
-                                    animate={{ rotate: 360, scale: [1, 1.2, 0] }}
-                                    transition={{ duration: 2, ease: "anticipate" }}
-                                    className="mb-8"
-                                >
-                                    <RotateCw size={64} className="text-red-500" />
-                                </motion.div>
-                                <h2 className="text-4xl font-black text-white mb-2 glitch-text" data-text="THANH_LỌC_HỆ_THỐNG">THANH_LỌC_HỆ_THỐNG</h2>
-                                <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden">
+                    {/* RESETTING */}
+                    {
+                        gameState === 'RESETTING' && (
+                            <motion.div
+                                key="resetting"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="flex flex-col items-center justify-center h-[60vh] relative z-50"
+                            >
+                                <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+                                <div className="relative z-10 flex flex-col items-center">
                                     <motion.div
-                                        initial={{ width: "0%" }}
-                                        animate={{ width: "100%" }}
-                                        transition={{ duration: 2, ease: "linear" }}
-                                        className="h-full bg-red-500"
-                                    />
+                                        animate={{ rotate: 360, scale: [1, 1.2, 0] }}
+                                        transition={{ duration: 2, ease: "anticipate" }}
+                                        className="mb-8"
+                                    >
+                                        <RotateCw size={64} className="text-red-500" />
+                                    </motion.div>
+                                    <h2 className="text-4xl font-black text-white mb-2 glitch-text" data-text="THANH_LỌC_HỆ_THỐNG">THANH_LỌC_HỆ_THỐNG</h2>
+                                    <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: "0%" }}
+                                            animate={{ width: "100%" }}
+                                            transition={{ duration: 2, ease: "linear" }}
+                                            className="h-full bg-red-500"
+                                        />
+                                    </div>
+                                    <div className="mt-4 font-mono text-xs text-red-400">
+                                        <ScrambleText text=">> ĐANG XÓA BỘ NHỚ ĐỆM... ĐANG ĐẶT LẠI MẠNG THẦN KINH..." />
+                                    </div>
                                 </div>
-                                <div className="mt-4 font-mono text-xs text-red-400">
-                                    <ScrambleText text=">> ĐANG XÓA BỘ NHỚ ĐỆM... ĐANG ĐẶT LẠI MẠNG THẦN KINH..." />
-                                </div>
-                            </div>
-                        </motion.div>
-                    )}
+                            </motion.div>
+                        )
+                    }
                 </AnimatePresence>
             </div>
         </section>
