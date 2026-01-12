@@ -2062,6 +2062,7 @@ const CyberGameSection = () => {
             <div className="max-w-6xl w-full z-10 relative">
                 <AnimatePresence mode="wait">
                     {/* INTRO */}
+                    {/* INTRO */}
                     {gameState === 'INTRO' && (
                         <motion.div
                             key="intro"
@@ -2069,37 +2070,75 @@ const CyberGameSection = () => {
                             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                             exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
                             transition={{ duration: 0.8 }}
-                            className="text-center"
+                            className="text-center relative z-20"
                         >
+                            {/* Central Fingerprint Scanner V2 */}
                             <div className="mb-12 relative inline-flex items-center justify-center">
-                                <div className="absolute inset-0 border border-dashed border-lime-400/30 rounded-full animate-[spin_20s_linear_infinite]" />
-                                <div className="absolute inset-[-20px] border border-lime-400/10 rounded-full animate-[spin_15s_linear_infinite_reverse] scale-110" />
-                                <div className="w-56 h-56 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 relative overflow-hidden group cursor-pointer" onClick={() => setGameState('PLAYING')}>
-                                    <div className="absolute inset-0 bg-lime-400/20 scale-0 group-hover:scale-100 transition-transform duration-700 ease-out rounded-full" />
-                                    <Fingerprint size={80} strokeWidth={1} className="text-lime-400 relative z-10 group-hover:scale-110 transition-transform duration-500" />
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <div className="w-full h-[2px] bg-lime-400/50 blur-[2px] animate-[scan_2s_linear_infinite]" />
-                                    </div>
+                                {/* Rotating multiple rings */}
+                                <div className="absolute inset-[-40px] border border-dashed border-lime-500/20 rounded-full animate-[spin_20s_linear_infinite]" />
+                                <div className="absolute inset-[-20px] border border-lime-400/10 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                                <div className="absolute inset-0 border border-t-lime-400 border-r-transparent border-b-lime-400 border-l-transparent rounded-full animate-spin-slow" />
+
+                                {/* Core */}
+                                <div
+                                    className="w-48 h-48 rounded-full bg-[#050505] flex items-center justify-center border border-white/10 relative overflow-hidden group cursor-pointer shadow-[0_0_50px_rgba(132,204,22,0.15)] hover:shadow-[0_0_80px_rgba(132,204,22,0.3)] transition-all duration-500"
+                                    onClick={() => setGameState('PLAYING')}
+                                >
+                                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-lime-400/10 to-transparent opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                                    {/* Scanline */}
+                                    <div className="absolute inset-0 w-full h-[2px] bg-lime-400/50 blur-[1px] animate-[scan_1.5s_linear_infinite]" />
+                                    <div className="absolute inset-0 w-full h-[20px] bg-lime-400/10 animate-[scan_1.5s_linear_infinite]" />
+
+                                    <Fingerprint size={64} strokeWidth={1} className="text-lime-400 relative z-10 group-hover:scale-110 transition-transform duration-500 opacity-80" />
+
+                                    {/* Tech details */}
+                                    <div className="absolute top-8 text-[8px] font-mono text-lime-400/50">SCAN_ID</div>
+                                    <div className="absolute bottom-8 text-[8px] font-mono text-lime-400/50">READY</div>
                                 </div>
                             </div>
 
-                            <h2 className="text-7xl md:text-9xl font-black text-white mb-6 tracking-normal leading-tight mix-blend-screen">
-                                NHẬN_DẠNG<br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400">ĐỒNG_BỘ_V2.0</span>
-                            </h2>
-                            <p className="text-white/50 font-mono text-lg max-w-xl mx-auto mb-12">
-                                Khởi tạo bắt tay thần kinh nâng cao. <br />
-                                Hệ thống sẽ phân tích các mô hình nhận thức của bạn để xác định phân loại hoạt động tối ưu.
-                            </p>
+                            {/* Title Block */}
+                            <div className="mb-8 space-y-2">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="text-7xl md:text-9xl font-black text-white tracking-tighter leading-none"
+                                >
+                                    NHÂN_DẠNG
+                                </motion.div>
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3 }}
+                                    className="text-6xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-lime-400 to-emerald-400 tracking-tighter leading-none"
+                                >
+                                    ĐỒNG_BỘ_V2.0
+                                </motion.div>
+                            </div>
 
-                            <Magnetic strength={0.5}>
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="text-white/40 font-mono text-sm uppercase tracking-widest max-w-2xl mx-auto mb-16 leading-7"
+                            >
+                                <span className="block mb-2">Khởi tạo bắt tay thần kinh nâng cao.</span>
+                                Hệ thống sẽ phân tích các mô hình nhận thức của bạn <br />
+                                để xác định phân loại hoạt động tối ưu.
+                            </motion.p>
+
+                            <Magnetic strength={0.4}>
                                 <button
                                     onClick={() => setGameState('PLAYING')}
-                                    className="relative px-16 py-6 group overflow-hidden bg-white/5 border border-white/10 rounded-full hover:border-lime-400/50 transition-all duration-500"
+                                    className="group relative px-12 py-5 bg-[#0a0a0a] border border-white/10 rounded-full hover:border-lime-400 transition-all duration-300 overflow-hidden"
                                 >
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-lime-400/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                                    <span className="relative font-bold font-mono text-xl text-white group-hover:text-lime-400 flex items-center gap-3">
-                                        BẮT_ĐẦU_PHÂN_TÍCH <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </span>
+                                    <div className="absolute inset-0 bg-lime-400/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                                    <div className="relative flex items-center gap-4 font-black font-mono text-lg text-white group-hover:text-lime-400 transition-colors">
+                                        <span>BẮT_ĐẦU_PHÂN_TÍCH</span>
+                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                    </div>
                                 </button>
                             </Magnetic>
                         </motion.div>
@@ -2114,20 +2153,18 @@ const CyberGameSection = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                         >
-                            {/* Improved HUD */}
-                            <div className="flex justify-between items-center mb-16 pb-6 border-b border-white/10 relative">
-                                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime-400/50 to-transparent" />
-
+                            {/* Improved HUD V2 */}
+                            <div className="flex justify-between items-end mb-20 relative">
                                 <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 relative overflow-hidden">
-                                        <span className="font-mono font-bold text-2xl text-lime-400 relative z-10">0{currentScenario + 1}</span>
-                                        <div className="absolute inset-0 bg-lime-400/10 animate-pulse" />
+                                    <div className="w-20 h-20 rounded-2xl bg-[#0a0a0a] flex items-center justify-center border border-white/10 relative overflow-hidden shadow-2xl">
+                                        <div className="text-4xl font-black text-lime-400 relative z-10 font-mono">0{currentScenario + 1}</div>
+                                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-lime-400/10 to-transparent animate-pulse" />
                                     </div>
-                                    <div>
-                                        <div className="font-mono text-[10px] text-lime-400 mb-1">TIẾN_ĐỘ</div>
-                                        <div className="h-2 w-48 bg-white/10 rounded-full overflow-hidden">
+                                    <div className="flex flex-col gap-2">
+                                        <div className="font-mono text-[10px] text-lime-400 font-bold tracking-widest uppercase">TIẾN_ĐỘ_QUÉT</div>
+                                        <div className="h-1.5 w-64 bg-white/5 rounded-full overflow-hidden backdrop-blur-sm border border-white/5">
                                             <motion.div
-                                                className="h-full bg-gradient-to-r from-lime-400 to-emerald-400"
+                                                className="h-full bg-lime-400 shadow-[0_0_10px_lime]"
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${((currentScenario + 1) / scenarios.length) * 100}%` }}
                                                 layout
@@ -2136,394 +2173,437 @@ const CyberGameSection = () => {
                                     </div>
                                 </div>
                                 <div className="text-right hidden md:block">
-                                    <div className="font-mono text-xs text-white/30 mb-1">MÃ_PHIÊN</div>
-                                    <div className="font-mono text-sm text-white">#{Math.random().toString(36).substr(2, 9).toUpperCase()}</div>
+                                    <div className="font-mono text-[10px] text-white/30 mb-1 tracking-widest">MÃ_PHIÊN</div>
+                                    <div className="font-mono text-sm text-lime-400 font-bold">#{Math.random().toString(36).substr(2, 9).toUpperCase()}</div>
                                 </div>
                             </div>
-
-
 
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentScenario}
-                                    initial={{ opacity: 0, x: 50, filter: "blur(10px)" }}
-                                    animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                                    exit={{ opacity: 0, x: -50, filter: "blur(10px)" }}
-                                    transition={{ duration: 0.5, ease: "circOut" }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.4 }}
                                 >
-                                    <div className="mb-12">
-                                        <h3 className="text-3xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight">
-                                            {scenarios[currentScenario].title}
-                                        </h3>
-                                        <div className="h-1 w-20 bg-lime-400 mx-auto mb-8" />
-                                        <p className="text-xl md:text-2xl text-white/80 font-medium max-w-3xl mx-auto leading-relaxed">
+                                    <div className="mb-16">
+                                        <div className="flex items-center gap-4 mb-6">
+                                            <div className="w-2 h-2 bg-lime-400 rounded-full animate-pulse" />
+                                            <h3 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight">
+                                                {scenarios[currentScenario].title}
+                                            </h3>
+                                        </div>
+                                        <div className="w-24 h-1 bg-lime-400 mb-8" />
+                                        <p className="text-xl md:text-2xl text-white/60 font-medium max-w-3xl leading-relaxed">
                                             {scenarios[currentScenario].desc}
                                         </p>
                                     </div>
 
-                                    <div className="grid md:grid-cols-2 gap-6">
-                                        {scenarios[currentScenario].options.map((opt, i) => (
-                                            <TiltCard key={i} className="h-full" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
-                                                <button
-                                                    onClick={() => handleOptionClick(opt.type, i)}
-                                                    disabled={isTransitioning}
-                                                    className={`w-full h-full p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group ${selectedOption === i
-                                                        ? 'bg-lime-500/10 border-lime-500' // Selected state
-                                                        : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10' // Normal state
-                                                        } ${isTransitioning && selectedOption !== i ? 'opacity-50 blur-sm' : ''}`} // Dim others
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {scenarios[currentScenario].options.map((option, index) => {
+                                            const Icon = option.icon;
+                                            return (
+                                                <motion.button
+                                                    key={index}
+                                                    onClick={() => handleOptionClick(option.type, index)}
+                                                    initial={{ opacity: 0, scale: 0.9 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    transition={{ delay: index * 0.1 }}
+                                                    className={`group relative h-32 md:h-40 bg-[#0a0a0a] border border-white/5 hover:border-lime-400/50 rounded-2xl p-6 md:p-8 text-left transition-all duration-300 hover:shadow-[0_0_30px_rgba(132,204,22,0.1)] flex items-center gap-6 md:gap-8 overflow-hidden ${selectedOption === index ? 'border-lime-400 bg-lime-400/10' : ''}`}
                                                 >
-                                                    {/* Selected Ripple/Fill Effect */}
-                                                    {selectedOption === i && (
+                                                    {/* Hover Gradient */}
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-lime-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                                                    {/* Status Indicator */}
+                                                    <div className={`w-12 h-12 md:w-16 md:h-16 rounded-xl bg-black border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ${selectedOption === index ? 'bg-lime-400 text-black border-lime-400' : 'text-white/50 group-hover:text-lime-400 group-hover:border-lime-400/50'}`}>
+                                                        <Icon size={24} className="md:w-8 md:h-8" />
+                                                    </div>
+
+                                                    <div className="relative z-10">
+                                                        <div className="font-mono text-[10px] text-white/30 mb-2 group-hover:text-lime-400/70 transition-colors uppercase tracking-widest">
+                                                            GIAO_THỨC_0{index + 1}
+                                                        </div>
+                                                        <span className="text-lg md:text-2xl font-bold text-white group-hover:text-white transition-colors">
+                                                            {option.label}
+                                                        </span>
+                                                    </div>
+
+                                                    {/* Selected Indicator */}
+                                                    {selectedOption === index && (
                                                         <motion.div
                                                             layoutId="selection-ring"
-                                                            className="absolute inset-0 border-2 border-lime-400 rounded-2xl pointer-events-none"
-                                                            initial={{ opacity: 0 }}
-                                                            animate={{ opacity: 1 }}
-                                                            transition={{ duration: 0.2 }}
+                                                            className="absolute inset-0 border-2 border-lime-400 rounded-2xl"
+                                                            transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                                         />
                                                     )}
-                                                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                                                </motion.button>
+                                            
+                                        </p>
+                                </div>
 
-                                                    <div className="relative z-10 flex items-start gap-6">
-                                                        <div className={`
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    {scenarios[currentScenario].options.map((opt, i) => (
+                                        <TiltCard key={i} className="h-full" whileHover={{ scale: 1.02 }} transition={{ duration: 0.3 }}>
+                                            <button
+                                                onClick={() => handleOptionClick(opt.type, i)}
+                                                disabled={isTransitioning}
+                                                className={`w-full h-full p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group ${selectedOption === i
+                                                    ? 'bg-lime-500/10 border-lime-500' // Selected state
+                                                    : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10' // Normal state
+                                                    } ${isTransitioning && selectedOption !== i ? 'opacity-50 blur-sm' : ''}`} // Dim others
+                                            >
+                                                {/* Selected Ripple/Fill Effect */}
+                                                {selectedOption === i && (
+                                                    <motion.div
+                                                        layoutId="selection-ring"
+                                                        className="absolute inset-0 border-2 border-lime-400 rounded-2xl pointer-events-none"
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        transition={{ duration: 0.2 }}
+                                                    />
+                                                )}
+                                                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+
+                                                <div className="relative z-10 flex items-start gap-6">
+                                                    <div className={`
                                                         p-5 rounded-xl border transition-all duration-500
                                                         ${selectedOption === i
-                                                                ? 'bg-lime-400 text-black border-lime-400 rotate-12 scale-110'
-                                                                : `bg-black/50 ${opt.color} border-white/10 group-hover:scale-110 group-hover:rotate-6`
-                                                            }
+                                                            ? 'bg-lime-400 text-black border-lime-400 rotate-12 scale-110'
+                                                            : `bg-black/50 ${opt.color} border-white/10 group-hover:scale-110 group-hover:rotate-6`
+                                                        }
                                                     `}>
-                                                            <motion.div
-                                                                animate={selectedOption === i ? { rotate: 360 } : {}}
-                                                                whileHover={{ scale: 1.2, rotate: 10 }} // Added subtle hover animation
-                                                                transition={{ duration: 0.5 }}
-                                                            >
-                                                                <opt.icon size={32} strokeWidth={1.5} />
-                                                            </motion.div>
-                                                        </div>
-
-                                                        <div className="flex-1">
-                                                            <div className="flex justify-between items-start mb-2">
-                                                                <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
-                                                                {selectedOption === i && <Check size={16} className="text-lime-400" />}
-                                                            </div>
-                                                            <div className={`text-xl font-bold transition-colors duration-300 ${selectedOption === i ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
-                                                                {opt.label}
-                                                            </div>
-                                                        </div>
+                                                        <motion.div
+                                                            animate={selectedOption === i ? { rotate: 360 } : {}}
+                                                            whileHover={{ scale: 1.2, rotate: 10 }} // Added subtle hover animation
+                                                            transition={{ duration: 0.5 }}
+                                                        >
+                                                            <opt.icon size={32} strokeWidth={1.5} />
+                                                        </motion.div>
                                                     </div>
 
-                                                    <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20 group-hover:border-lime-400/50 transition-colors" />
-                                                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20 group-hover:border-lime-400/50 transition-colors" />
-                                                </button>
-                                            </TiltCard>
-                                        ))}
-                                    </div>
-                                </motion.div>
+                                                    <div className="flex-1">
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
+                                                            {selectedOption === i && <Check size={16} className="text-lime-400" />}
+                                                        </div>
+                                                        <div className={`text-xl font-bold transition-colors duration-300 ${selectedOption === i ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
+                                                            {opt.label}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-white/20 group-hover:border-lime-400/50 transition-colors" />
+                                                <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-white/20 group-hover:border-lime-400/50 transition-colors" />
+                                            </button>
+                                        </TiltCard>
+                                    ))}
+                                </div>
+                        </motion.div>
                             </AnimatePresence>
-                        </motion.div>
+            </motion.div>
                     )}
 
-                    {/* ANALYZING */}
-                    {/* ANALYZING */}
-                    {gameState === 'ANALYZING' && (
-                        <motion.div
-                            key="analyzing"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center min-h-[60vh] w-full relative max-w-4xl mx-auto"
-                        >
-                            {/* Terminal Window Frame */}
-                            <div className="w-full bg-black/80 border border-white/10 rounded-xl overflow-hidden backdrop-blur-md relative shadow-2xl">
-                                {/* Window Header */}
-                                <div className="h-8 bg-white/5 border-b border-white/5 flex items-center px-4 justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                                        <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                                        <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                                    </div>
-                                    <div className="text-[10px] font-mono text-white/30 tracking-widest">SYSTEM_DIAGNOSTIC_TOOL_V9.0</div>
-                                </div>
-
-                                <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                                    {/* Background Grid */}
-                                    <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
-
-                                    {/* Left: Code Log Stream */}
-                                    <div className="col-span-2 space-y-2 font-mono text-xs relative z-10 h-64 overflow-hidden mask-linear-fade">
-                                        {[
-                                            "KHỞI_TẠO_BOOT_SEQUENCE...",
-                                            "ĐANG_TẢI_KERNEL_THẦN_KINH...",
-                                            ">>> TRÍ TUỆ NHÂN TẠO: [SẴN SÀNG]",
-                                            ">>> CẢM BIẾN SINH HỌC: [KẾT NỐI]",
-                                            "ĐANG PHÂN TÍCH DỮ LIỆU ĐẦU VÀO...",
-                                            "--- BẮT ĐẦU QUÉT MẪU ---",
-                                            "PHÁT HIỆN TÍN HIỆU LOGIC... 98%",
-                                            "KIỂM TRA CHỈ SỐ SÁNG TẠO... HOÀN TẤT",
-                                            "TỐI ƯU HÓA VECTOR KHÔNG GIAN #A992",
-                                            "ĐANG BIÊN DỊCH MÃ GEN KỸ THUẬT SỐ...",
-                                            "CẢNH BÁO: PHÁT HIỆN TIỀM NĂNG CAO",
-                                            "ĐANG TÁI CẤU TRÚC MÔ HÌNH DỰ ĐOÁN...",
-                                            "KẾT XUẤT DỮ LIỆU CUỐI CÙNG...",
-                                            "ĐỒNG BỘ HÓA VỚI MÁY CHỦ TRUNG TÂM...",
-                                            "XÁC THỰC NGƯỜI DÙNG: HỢP LỆ"
-                                        ].map((log, i) => (
-                                            <motion.div
-                                                key={i}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                animate={{ opacity: [0, 1, 0.5] }}
-                                                transition={{ duration: 0.2, delay: i * 0.15 }}
-                                                className="text-lime-400/80 flex gap-2"
-                                            >
-                                                <span className="text-white/30">[{new Date().toLocaleTimeString()}:{Math.floor(Math.random() * 99)}]</span>
-                                                {log}
-                                            </motion.div>
-                                        ))}
-                                        <motion.div
-                                            animate={{ opacity: [0, 1, 0] }}
-                                            transition={{ duration: 0.5, repeat: Infinity }}
-                                            className="w-3 h-5 bg-lime-400 inline-block align-middle"
-                                        />
-                                    </div>
-
-                                    {/* Right: Analysis Viz */}
-                                    <div className="space-y-4 relative z-10 font-mono text-xs">
-                                        <div className="flex justify-between items-center text-white/50 mb-2 border-b border-white/10 pb-1">
-                                            <span>MỤC_TIÊU_XÁC_ĐỊNH</span>
-                                            <span>TRẠNG_THÁI</span>
-                                        </div>
-
-                                        {Object.entries(tracks).map(([key, track], idx) => {
-                                            const currentScore = scores[key];
-                                            const maxScore = Math.max(...Object.values(scores));
-                                            const isTie = Object.values(scores).filter(s => s === maxScore).length > 1;
-                                            // Only highlight if it's the winner AND there is no tie
-                                            const isWinner = !isTie && result === key;
-
-                                            // Determine bar color and status text based on whether it's the winner
-                                            const getStatusColor = () => {
-                                                if (isWinner) return "text-lime-400";
-                                                return "text-white/30";
-                                            };
-
-                                            const getStatusText = () => {
-                                                if (isWinner) return "KẾT NỐI AN TOÀN";
-                                                if (isTie && currentScore === maxScore) return "TÍN HIỆU CAO..."; // Special text for ties?
-                                                return "TÍN HIỆU YẾU...";
-                                            };
-
-                                            return (
-                                                <motion.div
-                                                    key={key}
-                                                    className={`relative p-3 rounded-lg transition-all duration-500 ${isWinner
-                                                        ? 'bg-lime-400/10 border border-lime-400/50 shadow-[0_0_20px_rgba(163,230,53,0.2)] scale-105 z-10'
-                                                        : 'border border-transparent opacity-60'
-                                                        }`}
-                                                    initial={{ opacity: 0, x: 20 }}
-                                                    animate={{ opacity: isWinner ? 1 : 0.6, x: 0 }}
-                                                    transition={{ delay: 0.5 + idx * 0.2 }}
-                                                >
-                                                    <div className="flex justify-between items-end mb-1">
-                                                        <span className={`font-bold tracking-widest ${isWinner ? 'text-lime-300' : 'text-white/40'}`}>
-                                                            {track.subtitle}
-                                                        </span>
-                                                        <span className={`${getStatusColor()} text-[9px]`}>
-                                                            {isWinner ? (
-                                                                <span className="text-lime-400 font-bold animate-pulse">
-                                                                    KẾT NỐI AN TOÀN [OK]
-                                                                </span>
-                                                            ) : (
-                                                                <span className="animate-pulse">
-                                                                    {isTie && currentScore === maxScore ? "TIỀM NĂNG [?]" : "ĐANG QUÉT..."}
-                                                                </span>
-                                                            )}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* Progress Bar Container */}
-                                                    <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden relative">
-                                                        {/* Animated Bar */}
-                                                        {isWinner ? (
-                                                            // Winner Animation: Fills to 100% and turns Green
-                                                            <motion.div
-                                                                className="h-full bg-lime-400 shadow-[0_0_10px_rgba(163,230,53,0.5)]"
-                                                                initial={{ width: "0%" }}
-                                                                animate={{ width: "100%" }}
-                                                                transition={{ duration: 2.5, ease: "circOut", delay: 0.5 }}
-                                                            />
-                                                        ) : (
-                                                            // Others (or Ties): Fluctuate randomly
-                                                            <motion.div
-                                                                className={`h-full ${track.bg.replace('bg-', 'bg-')} opacity-40`}
-                                                                initial={{ width: "0%" }}
-                                                                animate={{
-                                                                    width: currentScore === maxScore && isTie
-                                                                        ? ["40%", "60%", "50%", "70%"] // Ties fluctuate higher
-                                                                        : ["0%", "60%", "20%", "40%", "10%"], // Low scores fluctuate lower
-                                                                    opacity: [0.4, 0.6, 0.2]
-                                                                }}
-                                                                transition={{ duration: 3, ease: "linear", repeat: 0 }}
-                                                            />
-                                                        )}
-                                                    </div>
-
-                                                    {/* Selection Marker */}
-                                                    {isWinner && (
-                                                        <motion.div
-                                                            initial={{ opacity: 0, scale: 0 }}
-                                                            animate={{ opacity: 1, scale: 1 }}
-                                                            transition={{ delay: 3 }}
-                                                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_8px_#a3e635]"
-                                                        />
-                                                    )}
-                                                </motion.div>
-                                            )
-                                        })}
-                                    </div>
-                                </div>
+            {/* ANALYZING */}
+            {/* ANALYZING */}
+            {gameState === 'ANALYZING' && (
+                <motion.div
+                    key="analyzing"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center min-h-[60vh] w-full relative max-w-4xl mx-auto"
+                >
+                    {/* Terminal Window Frame */}
+                    <div className="w-full bg-black/80 border border-white/10 rounded-xl overflow-hidden backdrop-blur-md relative shadow-2xl">
+                        {/* Window Header */}
+                        <div className="h-8 bg-white/5 border-b border-white/5 flex items-center px-4 justify-between">
+                            <div className="flex items-center gap-2">
+                                <div className="w-3 h-3 rounded-full bg-red-500/50" />
+                                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
+                                <div className="w-3 h-3 rounded-full bg-green-500/50" />
                             </div>
+                            <div className="text-[10px] font-mono text-white/30 tracking-widest">SYSTEM_DIAGNOSTIC_TOOL_V9.0</div>
+                        </div>
 
-                            <h3 className="text-2xl text-white font-bold mt-8 glitch-text animate-pulse decoration-clone" data-text="PROCESSING_NEURAL_LINK...">
-                                PROCESSING_NEURAL_LINK...
-                            </h3>
-                        </motion.div>
-                    )}
+                        <div className="p-8 grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                            {/* Background Grid */}
+                            <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,0,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,0,0.03)_1px,transparent_1px)] bg-[size:20px_20px]" />
 
-                    {/* RESULT */}
-                    {gameState === 'RESULT' && (
-                        <motion.div
-                            key="result"
-                            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                            transition={{ type: "spring", stiffness: 50 }}
-                            className="w-full max-w-5xl mx-auto"
-                        >
-                            <SpotlightItem className="relative bg-[#050505] border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
-                                {/* Top Decoration */}
-                                <div className={`h-2 w-full bg-gradient-to-r ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'} opacity-50`} />
-
-                                <div className="p-8 md:p-16 relative z-10 grid md:grid-cols-12 gap-16">
-                                    {/* Left: Identity Card */}
-                                    <div className="md:col-span-5 relative">
-                                        <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-2xl -m-4 transform -rotate-2" />
-                                        <div className={`relative p-8 rounded-2xl bg-black border ${tracks[result].border} text-center overflow-hidden`}>
-                                            {/* Holographic BG */}
-                                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-                                            <div className={`absolute -top-20 -right-20 w-40 h-40 ${tracks[result].bg} blur-[60px] opacity-40`} />
-
-                                            {/* Icon */}
-                                            <div className={`w-32 h-32 mx-auto rounded-full ${tracks[result].bg} bg-opacity-20 flex items-center justify-center mb-8 border-2 ${tracks[result].border} shadow-[0_0_30px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500`}>
-                                                {(() => {
-                                                    const Icon = tracks[result].icon;
-                                                    return <Icon size={64} className={tracks[result].color} />;
-                                                })()}
-                                            </div>
-
-                                            <div className="font-mono text-[10px] text-white/40 mb-3 tracking-[0.2em]">XÁC_NHẬN_DANH_TÍNH</div>
-                                            <h2 className={`text-4xl md:text-5xl font-black uppercase leading-tight mb-4 ${tracks[result].color}`}>
-                                                {tracks[result].title}
-                                            </h2>
-                                            <div className="inline-block px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-bold text-white tracking-widest uppercase border border-white/5">
-                                                {tracks[result].subtitle}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Right: Stats & Action */}
-                                    <div className="md:col-span-7 flex flex-col justify-center">
-                                        <div className="mb-8">
-                                            <h3 className="font-mono text-sm text-lime-400 mb-4 uppercase tracking-widest flex items-center gap-2"> {/* Increased margin-bottom */}
-                                                <Activity size={14} /> Phân Tích Thần Kinh Hoàn Tất
-                                            </h3>
-                                            <p className="text-2xl text-white/80 font-light leading-loose"> {/* Changed relaxed to loose */}
-                                                "{tracks[result].desc}"
-                                            </p>
-                                        </div>
-
-                                        <div className="space-y-5 mb-12">
-                                            {Object.entries(scores).map(([key, val], idx) => (
-                                                <motion.div
-                                                    key={key}
-                                                    initial={{ opacity: 0, x: -20 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    transition={{ delay: 0.5 + (idx * 0.1) }}
-                                                >
-                                                    <div className="flex justify-between text-[10px] font-bold text-white mb-2 uppercase tracking-wider">
-                                                        <span>{key}</span>
-                                                        <span className="text-xs text-lime-400">SECURE CONNECTION ESTABLISHED</span>
-                                                    </div>
-                                                    <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
-                                                        <motion.div
-                                                            initial={{ width: 0 }}
-                                                            animate={{ width: `${Math.min(100, (val / 5) * 100)}%` }}
-                                                            transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
-                                                            className={`h-full ${tracks[key] ? tracks[key].bg : 'bg-white'} shadow-[0_0_10px_currentColor]`}
-                                                        />
-                                                    </div>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-
-                                        <div className="flex gap-4">
-                                            <button
-                                                onClick={() => document.getElementById('apply').scrollIntoView({ behavior: 'smooth' })}
-                                                className="flex-1 py-5 bg-lime-400 hover:bg-lime-300 text-black font-black font-mono text-sm uppercase transition-all hover:scale-105 shadow-[0_0_30px_rgba(163,230,53,0.3)] flex items-center justify-center gap-3 rounded-lg"
-                                            >
-                                                Khởi Chạy Chuỗi <ArrowRight size={18} />
-                                            </button>
-                                            <button
-                                                onClick={handleRecalibrate}
-                                                className="px-8 py-5 border border-white/20 hover:bg-white/5 text-white font-mono text-xs uppercase transition-all hover:scale-105 hover:border-lime-400/50 rounded-lg group"
-                                            >
-                                                <span className="flex items-center gap-2 align-middle">
-                                                    <RotateCw size={16} className="group-hover:rotate-180 transition-transform duration-700" />
-                                                    Tái Hiệu Chỉnh
-                                                </span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </SpotlightItem>
-                        </motion.div>
-                    )}
-
-                    {/* NEW RESETTING STATE */}
-                    {gameState === 'RESETTING' && (
-                        <motion.div
-                            key="resetting"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="flex flex-col items-center justify-center h-[60vh] relative z-50"
-                        >
-                            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
-                            <div className="relative z-10 flex flex-col items-center">
-                                <motion.div
-                                    animate={{ rotate: 360, scale: [1, 1.2, 0] }}
-                                    transition={{ duration: 2, ease: "anticipate" }}
-                                    className="mb-8"
-                                >
-                                    <RotateCw size={64} className="text-red-500" />
-                                </motion.div>
-                                <h2 className="text-4xl font-black text-white mb-2 glitch-text" data-text="THANH_LỌC_HỆ_THỐNG">THANH_LỌC_HỆ_THỐNG</h2>
-                                <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden">
+                            {/* Left: Code Log Stream */}
+                            <div className="col-span-2 space-y-2 font-mono text-xs relative z-10 h-64 overflow-hidden mask-linear-fade">
+                                {[
+                                    "KHỞI_TẠO_BOOT_SEQUENCE...",
+                                    "ĐANG_TẢI_KERNEL_THẦN_KINH...",
+                                    ">>> TRÍ TUỆ NHÂN TẠO: [SẴN SÀNG]",
+                                    ">>> CẢM BIẾN SINH HỌC: [KẾT NỐI]",
+                                    "ĐANG PHÂN TÍCH DỮ LIỆU ĐẦU VÀO...",
+                                    "--- BẮT ĐẦU QUÉT MẪU ---",
+                                    "PHÁT HIỆN TÍN HIỆU LOGIC... 98%",
+                                    "KIỂM TRA CHỈ SỐ SÁNG TẠO... HOÀN TẤT",
+                                    "TỐI ƯU HÓA VECTOR KHÔNG GIAN #A992",
+                                    "ĐANG BIÊN DỊCH MÃ GEN KỸ THUẬT SỐ...",
+                                    "CẢNH BÁO: PHÁT HIỆN TIỀM NĂNG CAO",
+                                    "ĐANG TÁI CẤU TRÚC MÔ HÌNH DỰ ĐOÁN...",
+                                    "KẾT XUẤT DỮ LIỆU CUỐI CÙNG...",
+                                    "ĐỒNG BỘ HÓA VỚI MÁY CHỦ TRUNG TÂM...",
+                                    "XÁC THỰC NGƯỜI DÙNG: HỢP LỆ"
+                                ].map((log, i) => (
                                     <motion.div
-                                        initial={{ width: "0%" }}
-                                        animate={{ width: "100%" }}
-                                        transition={{ duration: 2, ease: "linear" }}
-                                        className="h-full bg-red-500"
-                                    />
+                                        key={i}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: [0, 1, 0.5] }}
+                                        transition={{ duration: 0.2, delay: i * 0.15 }}
+                                        className="text-lime-400/80 flex gap-2"
+                                    >
+                                        <span className="text-white/30">[{new Date().toLocaleTimeString()}:{Math.floor(Math.random() * 99)}]</span>
+                                        {log}
+                                    </motion.div>
+                                ))}
+                                <motion.div
+                                    animate={{ opacity: [0, 1, 0] }}
+                                    transition={{ duration: 0.5, repeat: Infinity }}
+                                    className="w-3 h-5 bg-lime-400 inline-block align-middle"
+                                />
+                            </div>
+
+                            {/* Right: Analysis Viz */}
+                            <div className="space-y-4 relative z-10 font-mono text-xs">
+                                <div className="flex justify-between items-center text-white/50 mb-2 border-b border-white/10 pb-1">
+                                    <span>MỤC_TIÊU_XÁC_ĐỊNH</span>
+                                    <span>TRẠNG_THÁI</span>
                                 </div>
-                                <div className="mt-4 font-mono text-xs text-red-400">
-                                    <ScrambleText text=">> ĐANG XÓA BỘ NHỚ ĐỆM... ĐANG ĐẶT LẠI MẠNG THẦN KINH..." />
+
+                                {Object.entries(tracks).map(([key, track], idx) => {
+                                    const currentScore = scores[key];
+                                    const maxScore = Math.max(...Object.values(scores));
+                                    const isTie = Object.values(scores).filter(s => s === maxScore).length > 1;
+                                    // Only highlight if it's the winner AND there is no tie
+                                    const isWinner = !isTie && result === key;
+
+                                    // Determine bar color and status text based on whether it's the winner
+                                    const getStatusColor = () => {
+                                        if (isWinner) return "text-lime-400";
+                                        return "text-white/30";
+                                    };
+
+                                    const getStatusText = () => {
+                                        if (isWinner) return "KẾT NỐI AN TOÀN";
+                                        if (isTie && currentScore === maxScore) return "TÍN HIỆU CAO..."; // Special text for ties?
+                                        return "TÍN HIỆU YẾU...";
+                                    };
+
+                                    return (
+                                        <motion.div
+                                            key={key}
+                                            className={`relative p-3 rounded-lg transition-all duration-500 ${isWinner
+                                                ? 'bg-lime-400/10 border border-lime-400/50 shadow-[0_0_20px_rgba(163,230,53,0.2)] scale-105 z-10'
+                                                : 'border border-transparent opacity-60'
+                                                }`}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: isWinner ? 1 : 0.6, x: 0 }}
+                                            transition={{ delay: 0.5 + idx * 0.2 }}
+                                        >
+                                            <div className="flex justify-between items-end mb-1">
+                                                <span className={`font-bold tracking-widest ${isWinner ? 'text-lime-300' : 'text-white/40'}`}>
+                                                    {track.subtitle}
+                                                </span>
+                                                <span className={`${getStatusColor()} text-[9px]`}>
+                                                    {isWinner ? (
+                                                        <span className="text-lime-400 font-bold animate-pulse">
+                                                            KẾT NỐI AN TOÀN [OK]
+                                                        </span>
+                                                    ) : (
+                                                        <span className="animate-pulse">
+                                                            {isTie && currentScore === maxScore ? "TIỀM NĂNG [?]" : "ĐANG QUÉT..."}
+                                                        </span>
+                                                    )}
+                                                </span>
+                                            </div>
+
+                                            {/* Progress Bar Container */}
+                                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden relative">
+                                                {/* Animated Bar */}
+                                                {isWinner ? (
+                                                    // Winner Animation: Fills to 100% and turns Green
+                                                    <motion.div
+                                                        className="h-full bg-lime-400 shadow-[0_0_10px_rgba(163,230,53,0.5)]"
+                                                        initial={{ width: "0%" }}
+                                                        animate={{ width: "100%" }}
+                                                        transition={{ duration: 2.5, ease: "circOut", delay: 0.5 }}
+                                                    />
+                                                ) : (
+                                                    // Others (or Ties): Fluctuate randomly
+                                                    <motion.div
+                                                        className={`h-full ${track.bg.replace('bg-', 'bg-')} opacity-40`}
+                                                        initial={{ width: "0%" }}
+                                                        animate={{
+                                                            width: currentScore === maxScore && isTie
+                                                                ? ["40%", "60%", "50%", "70%"] // Ties fluctuate higher
+                                                                : ["0%", "60%", "20%", "40%", "10%"], // Low scores fluctuate lower
+                                                            opacity: [0.4, 0.6, 0.2]
+                                                        }}
+                                                        transition={{ duration: 3, ease: "linear", repeat: 0 }}
+                                                    />
+                                                )}
+                                            </div>
+
+                                            {/* Selection Marker */}
+                                            {isWinner && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, scale: 0 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    transition={{ delay: 3 }}
+                                                    className="absolute -right-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-lime-400 rounded-full shadow-[0_0_8px_#a3e635]"
+                                                />
+                                            )}
+                                        </motion.div>
+                                    )
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 className="text-2xl text-white font-bold mt-8 glitch-text animate-pulse decoration-clone" data-text="PROCESSING_NEURAL_LINK...">
+                        PROCESSING_NEURAL_LINK...
+                    </h3>
+                </motion.div>
+            )}
+
+            {/* RESULT */}
+            {gameState === 'RESULT' && (
+                <motion.div
+                    key="result"
+                    initial={{ opacity: 0, scale: 0.9, y: 50 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
+                    transition={{ type: "spring", stiffness: 50 }}
+                    className="w-full max-w-5xl mx-auto"
+                >
+                    <SpotlightItem className="relative bg-[#050505] border border-white/10 rounded-3xl overflow-hidden shadow-2xl group">
+                        {/* Top Decoration */}
+                        <div className={`h-2 w-full bg-gradient-to-r ${tracks[result] ? tracks[result].gradient : 'from-gray-500 to-white'} opacity-50`} />
+
+                        <div className="p-8 md:p-16 relative z-10 grid md:grid-cols-12 gap-16">
+                            {/* Left: Identity Card */}
+                            <div className="md:col-span-5 relative">
+                                <div className="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent rounded-2xl -m-4 transform -rotate-2" />
+                                <div className={`relative p-8 rounded-2xl bg-black border ${tracks[result].border} text-center overflow-hidden`}>
+                                    {/* Holographic BG */}
+                                    <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
+                                    <div className={`absolute -top-20 -right-20 w-40 h-40 ${tracks[result].bg} blur-[60px] opacity-40`} />
+
+                                    {/* Icon */}
+                                    <div className={`w-32 h-32 mx-auto rounded-full ${tracks[result].bg} bg-opacity-20 flex items-center justify-center mb-8 border-2 ${tracks[result].border} shadow-[0_0_30px_rgba(0,0,0,0.5)] group-hover:scale-110 transition-transform duration-500`}>
+                                        {(() => {
+                                            const Icon = tracks[result].icon;
+                                            return <Icon size={64} className={tracks[result].color} />;
+                                        })()}
+                                    </div>
+
+                                    <div className="font-mono text-[10px] text-white/40 mb-3 tracking-[0.2em]">XÁC_NHẬN_DANH_TÍNH</div>
+                                    <h2 className={`text-4xl md:text-5xl font-black uppercase leading-tight mb-4 ${tracks[result].color}`}>
+                                        {tracks[result].title}
+                                    </h2>
+                                    <div className="inline-block px-4 py-1.5 bg-white/10 rounded-full text-[10px] font-bold text-white tracking-widest uppercase border border-white/5">
+                                        {tracks[result].subtitle}
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Right: Stats & Action */}
+                            <div className="md:col-span-7 flex flex-col justify-center">
+                                <div className="mb-8">
+                                    <h3 className="font-mono text-sm text-lime-400 mb-4 uppercase tracking-widest flex items-center gap-2"> {/* Increased margin-bottom */}
+                                        <Activity size={14} /> Phân Tích Thần Kinh Hoàn Tất
+                                    </h3>
+                                    <p className="text-2xl text-white/80 font-light leading-loose"> {/* Changed relaxed to loose */}
+                                        "{tracks[result].desc}"
+                                    </p>
+                                </div>
+
+                                <div className="space-y-5 mb-12">
+                                    {Object.entries(scores).map(([key, val], idx) => (
+                                        <motion.div
+                                            key={key}
+                                            initial={{ opacity: 0, x: -20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            transition={{ delay: 0.5 + (idx * 0.1) }}
+                                        >
+                                            <div className="flex justify-between text-[10px] font-bold text-white mb-2 uppercase tracking-wider">
+                                                <span>{key}</span>
+                                                <span className="text-xs text-lime-400">SECURE CONNECTION ESTABLISHED</span>
+                                            </div>
+                                            <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                <motion.div
+                                                    initial={{ width: 0 }}
+                                                    animate={{ width: `${Math.min(100, (val / 5) * 100)}%` }}
+                                                    transition={{ duration: 1.5, delay: 1, ease: "circOut" }}
+                                                    className={`h-full ${tracks[key] ? tracks[key].bg : 'bg-white'} shadow-[0_0_10px_currentColor]`}
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    ))}
+                                </div>
+
+                                <div className="flex gap-4">
+                                    <button
+                                        onClick={() => document.getElementById('apply').scrollIntoView({ behavior: 'smooth' })}
+                                        className="flex-1 py-5 bg-lime-400 hover:bg-lime-300 text-black font-black font-mono text-sm uppercase transition-all hover:scale-105 shadow-[0_0_30px_rgba(163,230,53,0.3)] flex items-center justify-center gap-3 rounded-lg"
+                                    >
+                                        Khởi Chạy Chuỗi <ArrowRight size={18} />
+                                    </button>
+                                    <button
+                                        onClick={handleRecalibrate}
+                                        className="px-8 py-5 border border-white/20 hover:bg-white/5 text-white font-mono text-xs uppercase transition-all hover:scale-105 hover:border-lime-400/50 rounded-lg group"
+                                    >
+                                        <span className="flex items-center gap-2 align-middle">
+                                            <RotateCw size={16} className="group-hover:rotate-180 transition-transform duration-700" />
+                                            Tái Hiệu Chỉnh
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </SpotlightItem>
+                </motion.div>
+            )}
+
+            {/* NEW RESETTING STATE */}
+            {gameState === 'RESETTING' && (
+                <motion.div
+                    key="resetting"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="flex flex-col items-center justify-center h-[60vh] relative z-50"
+                >
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" />
+                    <div className="relative z-10 flex flex-col items-center">
+                        <motion.div
+                            animate={{ rotate: 360, scale: [1, 1.2, 0] }}
+                            transition={{ duration: 2, ease: "anticipate" }}
+                            className="mb-8"
+                        >
+                            <RotateCw size={64} className="text-red-500" />
                         </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        </section>
+                        <h2 className="text-4xl font-black text-white mb-2 glitch-text" data-text="THANH_LỌC_HỆ_THỐNG">THANH_LỌC_HỆ_THỐNG</h2>
+                        <div className="w-64 h-2 bg-white/10 rounded-full overflow-hidden">
+                            <motion.div
+                                initial={{ width: "0%" }}
+                                animate={{ width: "100%" }}
+                                transition={{ duration: 2, ease: "linear" }}
+                                className="h-full bg-red-500"
+                            />
+                        </div>
+                        <div className="mt-4 font-mono text-xs text-red-400">
+                            <ScrambleText text=">> ĐANG XÓA BỘ NHỚ ĐỆM... ĐANG ĐẶT LẠI MẠNG THẦN KINH..." />
+                        </div>
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
+            </div >
+        </section >
     );
 };
 
