@@ -777,6 +777,16 @@ const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { scrollY } = useScroll();
     const [hidden, setHidden] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
+    const [masterOpen, setMasterOpen] = useState(false); // Mobile Master Icon State
+
+    // Mobile Check
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     // Smart Scroll Logic
     useEffect(() => {
@@ -784,6 +794,7 @@ const Navigation = () => {
             const previous = scrollY.getPrevious();
             if (latest > previous && latest > 150) {
                 setHidden(true);
+                setMasterOpen(false); // Close menu on scroll
             } else {
                 setHidden(false);
             }
@@ -794,6 +805,7 @@ const Navigation = () => {
         if (href.startsWith('#')) {
             e.preventDefault();
             setIsOpen(false);
+            setMasterOpen(false);
             const targetId = href.replace('#', '');
             if (window.lenis) {
                 window.lenis.scrollTo(`#${targetId}`);
@@ -804,19 +816,10 @@ const Navigation = () => {
         }
     };
 
-    return (
-        <motion.nav
-            variants={{
-                visible: { y: 0, opacity: 1 },
-                hidden: { y: -100, opacity: 0 }
-            }}
-            animate={hidden ? "hidden" : "visible"}
-            transition={{ duration: 0.35, ease: "easeInOut" }}
-            className="fixed top-4 md:top-6 left-1/2 md:left-[48%] -translate-x-1/2 z-50 flex items-start gap-2 w-[95%] md:w-auto justify-center" // Mobile: Top centered, Desktop: Original 48% left
-        >
-
-
-            {/* 2. MAIN MENU (Dynamic Island) */}
+    // --- DESKTOP NAVIGATION (Original) ---
+    const DesktopNav = () => (
+        <div className="hidden md:flex items-start gap-2">
+            {/* 1. MAIN MENU (Dynamic Island) */}
             <motion.div
                 layout
                 className="glass-panel rounded-3xl overflow-hidden backdrop-blur-xl"
@@ -894,6 +897,7 @@ const Navigation = () => {
                     </AnimatePresence>
                 </div>
             </motion.div>
+
             {/* 2. REGISTER BUTTON (Middle) */}
             <motion.a
                 href="#apply"
@@ -903,44 +907,218 @@ const Navigation = () => {
                 whileTap={{ scale: 0.95 }}
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-lime-400/0 via-lime-400/10 to-lime-400/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
-                {/* Visual Pulse */}
                 <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
                 </span>
-
-                <span className="font-mono text-[10px] font-bold text-white tracking-widest group-hover:text-lime-400 transition-colors hidden md:block">
+                <span className="font-mono text-[10px] font-bold text-white tracking-widest group-hover:text-lime-400 transition-colors">
                     ĐĂNG KÝ
                 </span>
-
                 <ChevronDown className="w-3 h-3 text-white/50 group-hover:text-lime-400 -rotate-90 group-hover:rotate-0 transition-transform duration-300" />
             </motion.a>
 
             {/* 3. GAME MODULE (Right) */}
             <motion.a
                 href="/game"
-                className="glass-panel h-12 px-4 md:px-5 flex items-center gap-3 rounded-full bg-black/95 border border-white/10 hover:border-purple-500/50 hover:bg-purple-900/10 transition-all duration-300 group overflow-hidden relative cursor-pointer"
+                className="glass-panel h-12 px-5 flex items-center gap-3 rounded-full bg-black/95 border border-white/10 hover:border-purple-500/50 hover:bg-purple-900/10 transition-all duration-300 group overflow-hidden relative cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
-
                 <Gamepad2 className="w-4 h-4 text-purple-400 group-hover:rotate-12 transition-transform" />
-
-                {/* Text Stack */}
-                <div className="flex flex-col leading-none hidden md:flex">
+                <div className="flex flex-col leading-none">
                     <span className="font-black text-[10px] text-white tracking-widest group-hover:text-purple-400 transition-colors">GAME</span>
                     <span className="font-mono text-[8px] text-purple-400/50 group-hover:text-purple-400 transition-colors">ZONE</span>
                 </div>
-
-                {/* Tech Decor */}
-                <div className="hidden md:block w-[1px] h-4 bg-white/10 mx-1" />
-                <div className="hidden md:flex gap-0.5">
+                <div className="w-[1px] h-4 bg-white/10 mx-1" />
+                <div className="flex gap-0.5">
                     <div className="w-1 h-1 rounded-full bg-purple-500 animate-pulse" />
                     <div className="w-1 h-1 rounded-full bg-white/20" />
                 </div>
             </motion.a>
+        </div>
+    );
+
+    // --- MOBILE NAVIGATION (Master Icon) ---
+    const MobileNav = () => {
+        const [mobileSubMenuOpen, setMobileSubMenuOpen] = useState(false);
+
+        // Reset sub-menu when master closes
+        useEffect(() => {
+            if (!masterOpen) setMobileSubMenuOpen(false);
+        }, [masterOpen]);
+
+        return (
+            <div className="flex md:hidden items-center gap-3">
+                {/* 1. REGISTER BUTTON (Left - Always Visible but slides away on Menu Open) */}
+                <motion.a
+                    href="#apply"
+                    onClick={(e) => handleSmoothScroll(e, '#apply')}
+                    className="glass-panel h-12 pl-4 pr-5 flex items-center gap-3 rounded-full bg-black/95 border border-white/10 relative overflow-hidden"
+                    animate={{
+                        x: masterOpen ? -60 : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    whileTap={{ scale: 0.95 }}
+                >
+                    <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-lime-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-lime-500"></span>
+                    </span>
+                    <span className="font-mono text-xs font-bold text-white tracking-widest">
+                        ĐĂNG KÝ
+                    </span>
+                </motion.a>
+
+                {/* 2. MASTER ICON (Right) */}
+                <div className="relative z-50">
+                    <motion.button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setMasterOpen(!masterOpen);
+                        }}
+                        className={`
+                        w-12 h-12 rounded-full border flex items-center justify-center relative z-50 backdrop-blur-xl transition-colors duration-300
+                        ${masterOpen ? 'bg-white text-black border-white' : 'bg-black/80 text-white border-white/20'}
+                    `}
+                        animate={{
+                            rotate: masterOpen ? 135 : 0, // Rotates to X position and back
+                            scale: masterOpen ? 1.1 : 1
+                        }}
+                        transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                        whileTap={{ scale: 0.9 }}
+                    >
+                        <AnimatePresence mode="wait">
+                            {masterOpen ? (
+                                <motion.div
+                                    key="close"
+                                    initial={{ opacity: 0, rotate: -90 }}
+                                    animate={{ opacity: 1, rotate: 0 }}
+                                    exit={{ opacity: 0, rotate: 90 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <X size={20} />
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="menu"
+                                    initial={{ opacity: 0, rotate: 90 }}
+                                    animate={{ opacity: 1, rotate: 0 }}
+                                    exit={{ opacity: 0, rotate: -90 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Menu size={20} />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Tech Ring Animation */}
+                        <div className="absolute inset-[-4px] rounded-full border border-dashed border-white/30 animate-[spin_10s_linear_infinite]" />
+                    </motion.button>
+
+                    {/* EXPANSION ITEMS */}
+                    <AnimatePresence>
+                        {masterOpen && (
+                            <>
+                                {/* Menu Option: Left */}
+                                <motion.div
+                                    key="menu-satellite"
+                                    initial={{ opacity: 0, x: 0, scale: 0 }}
+                                    animate={{ opacity: 1, x: -65, scale: 1 }}
+                                    exit={{
+                                        opacity: 0,
+                                        x: 0,
+                                        scale: 0,
+                                        transition: { duration: 0.5, ease: "easeInOut" }
+                                    }}
+                                    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                                    className="absolute top-0 left-0 w-12 h-12 z-40"
+                                >
+                                    <motion.button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setMobileSubMenuOpen(!mobileSubMenuOpen);
+                                        }}
+                                        className={`w-12 h-12 rounded-full border flex items-center justify-center shadow-lg transition-colors ${mobileSubMenuOpen ? 'bg-cyan-500 border-cyan-400 text-black' : 'bg-[#1a1a1a] border-white/20 text-white'}`}
+                                    >
+                                        <Globe size={18} className={mobileSubMenuOpen ? 'text-black' : 'text-cyan-400'} />
+                                    </motion.button>
+                                    <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[9px] font-mono text-cyan-400 bg-black/80 px-1 rounded">MENU</span>
+                                </motion.div>
+
+                                {/* Game Option: Bottom */}
+                                <motion.div
+                                    key="game-satellite"
+                                    initial={{ opacity: 0, y: 0, scale: 0 }}
+                                    animate={{ opacity: 1, y: 65, scale: 1 }}
+                                    exit={{
+                                        opacity: 0,
+                                        y: 0,
+                                        scale: 0,
+                                        transition: { duration: 0.5, ease: "easeInOut" }
+                                    }}
+                                    transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.05 }}
+                                    className="absolute top-0 left-0 w-12 h-12 z-40"
+                                >
+                                    <a
+                                        href="/game"
+                                        onClick={(e) => e.stopPropagation()}
+                                        className="w-12 h-12 rounded-full bg-[#1a1a1a] border border-white/20 flex items-center justify-center text-white shadow-lg block"
+                                    >
+                                        <Gamepad2 size={18} className="text-purple-400" />
+                                    </a>
+                                    <span className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[9px] font-mono text-purple-400 bg-black/80 px-1 rounded">GAME</span>
+                                </motion.div>
+                            </>
+                        )}
+                    </AnimatePresence>
+
+                    {/* Mobile Menu Content (Full List) */}
+                    <AnimatePresence>
+                        {masterOpen && mobileSubMenuOpen && (
+                            <motion.div
+                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                className="absolute top-16 right-0 w-48 bg-[#0a0a0a] border border-white/10 rounded-2xl p-4 shadow-2xl z-30"
+                            >
+                                <div className="flex flex-col gap-2">
+                                    {[
+                                        { label: 'Trang Chủ', href: '#home' },
+                                        { label: 'Thuật Toán', href: '#algorithm' },
+                                        { label: 'Phân Ban', href: '#tracks' },
+                                        { label: 'Đăng Ký', href: '#apply' },
+                                    ].map((item) => (
+                                        <a
+                                            key={item.label}
+                                            href={item.href}
+                                            onClick={(e) => handleSmoothScroll(e, item.href)}
+                                            className="text-sm text-white/70 hover:text-lime-400 font-mono py-1 border-b border-white/5 last:border-0"
+                                        >
+                                            &gt; {item.label}
+                                        </a>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
+            </div>
+        );
+    };
+
+    return (
+        <motion.nav
+            variants={{
+                visible: { y: 0, opacity: 1 },
+                hidden: { y: -100, opacity: 0 }
+            }}
+            animate={hidden ? "hidden" : "visible"}
+            transition={{ duration: 0.35, ease: "easeInOut" }}
+            className="fixed top-4 md:top-6 w-full z-50 flex justify-center" // Center the nav container
+        >
+            <DesktopNav />
+            <MobileNav />
         </motion.nav>
     );
 };
@@ -1307,7 +1485,8 @@ const RegistrationForm = () => {
         const isProfane = (text) => {
             if (!text) return false;
             // Reduced blacklist - removed common Vietnamese words that caused false positives
-            const blacklist = ['nigga', 'nigger', 'faggot', 'retard', 'clmm', 'dmm'];
+            const blacklist = ['nigga', 'nigger', 'faggot', 'retard', 'clmm', 'dmm', 'memaybeo', 'negro'
+            ];
             const lower = text.toLowerCase().replace(/[^a-z]/g, '');
             // Only flag if the ENTIRE word matches, not partial matches
             return blacklist.some(word => lower === word || lower.split(/\s+/).includes(word));
@@ -1460,7 +1639,7 @@ const RegistrationForm = () => {
                         </label>
                         <input
                             type="text"
-                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                            className={`form-input text-lg md:text-2xl w-full bg-transparent border-b-2 py-2 md:py-3 focus:outline-none transition-all duration-300 font-mono
                                 ${errors.name && touched.name
                                     ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
                                     : touched.name && !errors.name
@@ -1472,24 +1651,24 @@ const RegistrationForm = () => {
                             onChange={(e) => handleInput('name', e)}
                             onBlur={() => handleBlur('name')}
                         />
-                        <div className="absolute right-4 bottom-4">
+                        <div className="absolute right-2 md:right-4 bottom-3 md:bottom-4">
                             <ValidationIcon status={getStatus('name')} />
                         </div>
                     </div>
 
                     {/* Class Input */}
                     <div className="group relative">
-                        <label className="flex justify-between text-xs font-mono text-white/50 mb-2">
+                        <label className="flex flex-wrap justify-between text-xs font-mono text-white/50 mb-2 gap-1">
                             <span>ĐƠN VỊ (Lớp)</span>
                             {errors.class && touched.class && (
-                                <span className="text-red-500 font-bold animate-pulse">
+                                <span className="text-red-500 font-bold animate-pulse text-[10px] md:text-xs">
                                     [!ERR] {errors.class}
                                 </span>
                             )}
                         </label>
                         <input
                             type="text"
-                            className={`form-input text-2xl w-full bg-transparent border-b-2 py-3 focus:outline-none transition-all duration-300 font-mono
+                            className={`form-input text-lg md:text-2xl w-full bg-transparent border-b-2 py-2 md:py-3 focus:outline-none transition-all duration-300 font-mono
                                 ${errors.class && touched.class
                                     ? 'border-red-500 text-red-500 animate-shake shadow-[0_0_15px_rgba(239,68,68,0.5)]'
                                     : touched.class && !errors.class
@@ -1502,7 +1681,7 @@ const RegistrationForm = () => {
                             onBlur={() => handleBlur('class')}
                         // maxLength={5} REMOVED: too restrictive
                         />
-                        <div className="absolute right-4 bottom-4">
+                        <div className="absolute right-2 md:right-4 bottom-3 md:bottom-4">
                             <ValidationIcon status={getStatus('class')} />
                         </div>
                     </div>
@@ -2148,16 +2327,16 @@ const CyberGameSection = () => {
                             exit={{ opacity: 0 }}
                         >
                             {/* Improved HUD */}
-                            <div className="flex justify-between items-center mb-16 pb-6 border-b border-white/10 relative">
+                            <div className="flex justify-between items-center mb-8 md:mb-16 pb-4 md:pb-6 border-b border-white/10 relative">
                                 <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime-400/50 to-transparent" />
-                                <div className="flex items-center gap-6">
-                                    <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 relative overflow-hidden">
-                                        <span className="font-mono font-bold text-2xl text-lime-400 relative z-10">0{currentScenario + 1}</span>
+                                <div className="flex items-center gap-3 md:gap-6">
+                                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 relative overflow-hidden">
+                                        <span className="font-mono font-bold text-xl md:text-2xl text-lime-400 relative z-10">0{currentScenario + 1}</span>
                                         <div className="absolute inset-0 bg-lime-400/10 animate-pulse" />
                                     </div>
                                     <div>
                                         <div className="font-mono text-[10px] text-lime-400 mb-1">TIẾN_ĐỘ</div>
-                                        <div className="h-2 w-48 bg-white/10 rounded-full overflow-hidden">
+                                        <div className="h-2 w-32 md:w-48 bg-white/10 rounded-full overflow-hidden">
                                             <motion.div
                                                 className="h-full bg-gradient-to-r from-lime-400 to-emerald-400"
                                                 initial={{ width: 0 }}
@@ -2181,17 +2360,18 @@ const CyberGameSection = () => {
                                     exit={{ opacity: 0, x: -50, filter: "blur(10px)" }}
                                     transition={{ duration: 0.5, ease: "circOut" }}
                                 >
-                                    <div className="mb-12">
-                                        <h3 className="text-3xl md:text-5xl font-black text-white mb-6 uppercase tracking-tight">
+                                    <div className="mb-6 md:mb-12">
+                                        <h3 className="text-2xl md:text-5xl font-black text-white mb-4 md:mb-6 uppercase tracking-tight">
                                             {scenarios[currentScenario].title}
                                         </h3>
-                                        <div className="h-1 w-20 bg-lime-400 mx-auto mb-8" />
-                                        <p className="text-xl md:text-2xl text-white/80 font-medium max-w-3xl mx-auto leading-relaxed">
+                                        <div className="h-1 w-16 md:w-20 bg-lime-400 mx-auto mb-4 md:mb-8" />
+                                        <p className="text-base md:text-xl text-white/80 font-medium max-w-3xl mx-auto leading-relaxed px-2 md:px-0">
                                             {scenarios[currentScenario].desc}
                                         </p>
                                     </div>
 
-                                    <div className="grid md:grid-cols-2 gap-6">
+
+                                    <div className="grid md:grid-cols-2 gap-3 md:gap-6">
                                         {scenarios[currentScenario].options.map((opt, i) => {
                                             const isSelected = selectedOption === i;
                                             return (
@@ -2199,7 +2379,7 @@ const CyberGameSection = () => {
                                                     <button
                                                         onClick={() => handleOptionClick(opt.type, i)}
                                                         disabled={isTransitioning}
-                                                        className={`w-full h-full p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group
+                                                        className={`w-full h-full p-4 md:p-8 rounded-2xl border text-left transition-all duration-300 relative overflow-hidden group
                                                         ${isSelected
                                                                 ? 'bg-lime-500/10 border-lime-500' // Selected state
                                                                 : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10' // Normal state
@@ -2218,9 +2398,9 @@ const CyberGameSection = () => {
                                                         )}
                                                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
 
-                                                        <div className="relative z-10 flex items-start gap-6">
+                                                        <div className="relative z-10 flex items-start gap-3 md:gap-6">
                                                             <div className={`
-                                                            p-5 rounded-xl border transition-all duration-500
+                                                            p-3 md:p-5 rounded-xl border transition-all duration-500
                                                             ${isSelected
                                                                     ? 'bg-lime-400 text-black border-lime-400 rotate-12 scale-110'
                                                                     : `bg-black/50 ${opt.color} border-white/10 group-hover:scale-110 group-hover:rotate-6`
@@ -2228,18 +2408,18 @@ const CyberGameSection = () => {
                                                         `}>
                                                                 <motion.div
                                                                     animate={isSelected ? { rotate: 360 } : {}}
-                                                                    whileHover={{ scale: 1.2, rotate: 10 }} // Added subtle hover animation
+                                                                    whileHover={{ scale: 1.2, rotate: 10 }}
                                                                     transition={{ duration: 0.5 }}
                                                                 >
-                                                                    <opt.icon size={32} strokeWidth={1.5} />
+                                                                    <opt.icon className="w-6 h-6 md:w-8 md:h-8" strokeWidth={1.5} />
                                                                 </motion.div>
                                                             </div>
                                                             <div className="flex-1">
-                                                                <div className="flex justify-between items-start mb-2">
-                                                                    <span className="font-mono text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
-                                                                    {isSelected && <Check size={16} className="text-lime-400" />}
+                                                                <div className="flex justify-between items-start mb-1 md:mb-2">
+                                                                    <span className="font-mono text-[8px] md:text-[10px] text-white/30 uppercase tracking-widest">Giao_thức_0{i + 1}</span>
+                                                                    {isSelected && <Check size={14} className="text-lime-400 md:w-4 md:h-4" />}
                                                                 </div>
-                                                                <div className={`text-xl font-bold transition-colors duration-300 ${isSelected ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
+                                                                <div className={`text-sm md:text-xl font-bold transition-colors duration-300 ${isSelected ? 'text-lime-400' : 'text-white group-hover:text-white/90'}`}>
                                                                     {opt.label}
                                                                 </div>
                                                             </div>
@@ -2627,32 +2807,32 @@ const AlgorithmSection = () => {
                     {/* Right Column: Broken Grid Content */}
                     <div className="md:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Item 1 - Wide */}
-                        <div className="md:col-span-2 relative group">
+                        <div className="md:col-span-2 relative group z-20">
                             {/* Adjusted positioning to prevent overlap */}
                             <div className="absolute -left-6 top-0 font-mono text-xs text-lime-400 -rotate-90 origin-bottom-right z-10 tracking-widest hidden md:block">INPUT_STREAM</div>
-                            <div className="border border-white/10 p-6 bg-white/[0.02] hover:bg-white/5 transition-colors duration-500 relative ml-0 md:ml-4">
+                            <div className="border border-white/10 p-6 bg-black/80 backdrop-blur-md hover:bg-white/5 transition-colors duration-500 relative ml-0 md:ml-4 rounded-xl">
                                 <h3 className="text-2xl font-bold mb-4 flex justify-between items-center relative z-10">
                                     <ScrambleText text="01 // QUAN SÁT" />
                                     <ArrowRight className="-rotate-45 group-hover:rotate-0 transition-transform text-lime-400" />
                                 </h3>
                                 <p className="text-white/50 mb-6 max-w-lg relative z-10">Quét đường chân trời tìm tín hiệu. Chúng tôi tiếp nhận dữ liệu từ dòng chảy công nghệ toàn cầu, lọc nhiễu để tìm tín hiệu.</p>
-                                <GlitchImage src={IMAGES.robotics} alt="Observation" className="h-64 w-full" />
+                                <GlitchImage src={IMAGES.robotics} alt="Observation" className="h-64 w-full rounded-lg" />
                             </div>
                         </div>
 
                         {/* Item 2 - Tall */}
-                        <motion.div style={{ y: yColumn }} className="md:row-span-2 relative group mt-12 md:mt-0">
-                            <div className="border border-white/10 p-6 bg-white/[0.02] h-full hover:bg-white/5 transition-colors duration-500 flex flex-col">
-                                <GlitchImage src={IMAGES.coding} alt="Processing" className="h-64 w-full mb-6 order-last md:order-first md:h-full md:max-h-[300px]" />
+                        <motion.div style={{ y: yColumn }} className="md:row-span-2 relative group mt-12 md:mt-0 z-20">
+                            <div className="border border-white/10 p-6 bg-black/80 backdrop-blur-md h-full hover:bg-white/5 transition-colors duration-500 flex flex-col rounded-xl">
+                                <GlitchImage src={IMAGES.coding} alt="Processing" className="h-64 w-full mb-6 order-last md:order-first md:h-full md:max-h-[300px] rounded-lg" />
                                 <h3 className="text-2xl font-bold mb-2 mt-auto"><ScrambleText text="02 // TỔNG HỢP" /></h3>
                                 <p className="text-white/50 text-sm">Hợp nhất các yếu tố rời rạc. Mã gặp Phần cứng. Nghệ thuật gặp Logic.</p>
                             </div>
                         </motion.div>
 
                         {/* Item 3 - Standard */}
-                        <div className="relative group">
+                        <div className="relative group z-20">
                             <Magnetic>
-                                <div className="border border-white/10 p-6 bg-white/[0.02] hover:bg-white/5 transition-colors duration-500 overflow-hidden relative">
+                                <div className="border border-white/10 p-6 bg-black/80 backdrop-blur-md hover:bg-white/5 transition-colors duration-500 overflow-hidden relative rounded-xl">
                                     <div className="absolute inset-0 bg-gradient-to-r from-lime-400/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
                                     <h3 className="text-2xl font-bold mb-4 text-right"><ScrambleText text="03 // TRIỂN KHAI" /></h3>
                                     <div className="h-[1px] w-full bg-white/10 mb-4 group-hover:bg-lime-400 transition-colors" />
@@ -2756,13 +2936,14 @@ const TracksSection = () => {
                     <div className="w-full md:w-auto md:shrink-0 flex flex-col justify-center border-l border-white/10 pl-4 md:pl-8 md:pr-12 backdrop-blur-sm mb-8 md:mb-0">
                         <span className="font-mono text-xs text-lime-400 mb-4 typing-effect">SELECT_MODULE</span>
                         <SkewScroll>
-                            <h2 className="text-6xl md:text-8xl font-vietnam font-bold leading-tight mb-8 text-white">
+                            <h2 className="text-4xl md:text-8xl font-vietnam font-bold leading-tight mb-4 md:mb-8 text-white">
                                 Chọn<br />Lối Đi<br /><span className="text-stroke text-transparent">Của Bạn</span>
                             </h2>
                         </SkewScroll>
-                        <div className="mt-8 flex gap-4">
+                        <div className="mt-4 md:mt-8 flex gap-4">
                             <ArrowRight className="animate-pulse text-lime-400" />
-                            <span className="font-mono text-xs text-white/50">CUỘN ĐỂ ĐIỀU HƯỚNG</span>
+                            <span className="font-mono text-xs text-white/50 hidden md:inline">CUỘN ĐỂ ĐIỀU HƯỚNG</span>
+                            <span className="font-mono text-xs text-white/50 md:hidden">VUỐT ĐỂ XEM</span>
                         </div>
                     </div>
 
@@ -2771,7 +2952,7 @@ const TracksSection = () => {
                         <motion.div
                             key={track.id}
                             layoutId={`card-${track.id}`}
-                            className="group relative h-[400px] md:h-[60vh] w-full md:w-[400px] md:shrink-0 bg-neutral-900 border border-white/10 flex flex-col cursor-pointer overflow-hidden"
+                            className="group relative h-[300px] md:h-[60vh] w-full md:w-[400px] md:shrink-0 bg-neutral-900 border border-white/10 flex flex-col cursor-pointer overflow-hidden"
                         >
                             {track.img ? (
                                 <motion.div layoutId={`img-${track.id}`} className="absolute inset-0">
@@ -2790,10 +2971,10 @@ const TracksSection = () => {
                             </div>
 
                             <TiltCard className="h-full relative z-20">
-                                <div className="h-full p-8 flex flex-col justify-end">
+                                <div className="h-full p-4 md:p-8 flex flex-col justify-end">
                                     <div className="mb-auto">
-                                        <div className="w-16 h-16 rounded-full bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:border-lime-400/50 transition-colors">
-                                            <track.icon size={32} style={{ color: track.color }} strokeWidth={1.5} />
+                                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white/5 backdrop-blur-md flex items-center justify-center border border-white/10 group-hover:border-lime-400/50 transition-colors">
+                                            <track.icon className="w-6 h-6 md:w-8 md:h-8" style={{ color: track.color }} strokeWidth={1.5} />
                                         </div>
                                     </div>
 
@@ -3274,11 +3455,11 @@ const StatsSection = () => {
 // TERMINAL FOOTER
 const Footer = () => {
     return (
-        <footer className="bg-[#050505] border-t border-white/10 pt-20 pb-8 px-6 relative overflow-hidden">
+        <footer className="bg-[#050505] border-t border-white/10 pt-12 md:pt-20 pb-8 px-4 md:px-6 relative overflow-hidden">
             <div className="max-w-7xl mx-auto relative z-10">
-                <div className="grid md:grid-cols-12 gap-12 mb-20">
+                <div className="grid md:grid-cols-12 gap-8 md:gap-12 mb-12 md:mb-20">
                     {/* Brand / Terminal */}
-                    <div className="md:col-span-5 space-y-8">
+                    <div className="md:col-span-5 space-y-4 md:space-y-8">
                         <div>
                             <div className="flex items-center gap-2 mb-2">
                                 <div className="w-3 h-3 rounded-full bg-red-500" />
@@ -3286,15 +3467,15 @@ const Footer = () => {
                                 <div className="w-3 h-3 rounded-full bg-green-500" />
                             </div>
                         </div>
-                        <p className="text-white/50 font-light max-w-sm leading-loose">
+                        <p className="text-white/50 font-light max-w-sm leading-loose text-sm md:text-base">
                             Trao quyền cho thế hệ nhà đổi mới tiếp theo thông qua Khoa học, Công nghệ, Kỹ thuật và Toán học.
                         </p>
                     </div>
 
                     {/* Sitemap */}
-                    <div className="md:col-span-3 space-y-6">
+                    <div className="md:col-span-3 space-y-4 md:space-y-6">
                         <h4 className="font-mono text-xs text-lime-400 uppercase tracking-widest">/// THƯ MỤC</h4>
-                        <ul className="space-y-4 font-mono text-sm text-white/60">
+                        <ul className="space-y-3 md:space-y-4 font-mono text-sm text-white/60">
                             {[
                                 { label: 'Thuật Toán', href: '#algorithm' },
                                 { label: 'Phân Ban', href: '#tracks' },
@@ -3312,15 +3493,15 @@ const Footer = () => {
                     </div>
 
                     {/* Newsletter CLI */}
-                    <div className="md:col-span-4 space-y-6">
+                    <div className="md:col-span-4 space-y-4 md:space-y-6">
                         <h4 className="font-mono text-xs text-lime-400 uppercase tracking-widest">/// CẬP NHẬT</h4>
                         <div className="relative group">
                             <div className="absolute inset-0 bg-lime-400/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="relative flex items-center bg-black border border-white/20 p-1">
-                                <span className="pl-3 pr-2 font-mono text-sm text-lime-400">$</span>
+                                <span className="pl-2 md:pl-3 pr-2 font-mono text-sm text-lime-400">$</span>
                                 <input
                                     type="email"
-                                    placeholder="dang_ky --email user@loc.al"
+                                    placeholder="email@example.com"
                                     className="bg-transparent w-full p-2 outline-none font-mono text-sm text-white placeholder-white/20"
                                 />
                                 <Magnetic>
@@ -3333,14 +3514,14 @@ const Footer = () => {
                     </div>
 
                     {/* Column 3: Social - Better Spacing */}
-                    <div className="md:col-span-12 flex gap-6 items-center mt-8"> {/* Adjusted to span full width and added margin-top */}
+                    <div className="md:col-span-12 flex gap-4 md:gap-6 items-center justify-center md:justify-start mt-4 md:mt-8">
                         {/* Facebook Icon with Link */}
                         <Magnetic strength={0.3}>
                             <a
                                 href="https://www.facebook.com/profile.php?id=61584400577309"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300 group"
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/10 flex items-center justify-center hover:bg-lime-400 hover:border-lime-400 hover:text-black transition-all duration-300 group"
                             >
                                 <svg
                                     viewBox="0 0 24 24"
@@ -3442,7 +3623,9 @@ export default function App() {
 
             <TechOverlay />
             <div className="noise-overlay" />
-            <CustomCursor />
+            <div className="hidden md:block">
+                <CustomCursor />
+            </div>
             {!loading && <Navigation />}
 
             <main className={loading ? 'opacity-0' : 'opacity-100 transition-opacity duration-1000'}>
