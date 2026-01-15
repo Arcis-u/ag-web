@@ -1306,10 +1306,11 @@ const RegistrationForm = () => {
 
         const isProfane = (text) => {
             if (!text) return false;
-            // Basic blacklist + simple variations
-            const blacklist = ['nigga', 'nigger', 'faggot', 'retard', 'cc', 'clmm', 'dmm', 'loz', 'kak', 'buoi', 'lol', 'occho', 'ngu', 'cho', 'dien'];
-            const lower = text.toLowerCase().replace(/[^a-z]/g, ''); // Strip symbols to catch "n.i.g.g.a"
-            return blacklist.some(word => lower.includes(word));
+            // Reduced blacklist - removed common Vietnamese words that caused false positives
+            const blacklist = ['nigga', 'nigger', 'faggot', 'retard', 'clmm', 'dmm'];
+            const lower = text.toLowerCase().replace(/[^a-z]/g, '');
+            // Only flag if the ENTIRE word matches, not partial matches
+            return blacklist.some(word => lower === word || lower.split(/\s+/).includes(word));
         };
 
         if (field === 'name') {
@@ -1336,23 +1337,16 @@ const RegistrationForm = () => {
         }
 
         if (field === 'email') {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            // More lenient email regex - accepts most valid email formats
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
             if (!value) newErrors.email = 'DỮ LIỆU TRỐNG // REQUIRED';
-            else if (isProfane(value) || isSpam(value)) newErrors.email = '⚠️ SYSTEM: EMAIL KHÔNG HỢP LỆ';
             else if (!emailRegex.test(value)) newErrors.email = 'LỖI KẾT NỐI: EMAIL KHÔNG HỢP LỆ';
             else delete newErrors.email;
         }
 
         if (field === 'socialLink') {
-            // Optional field, but if entered must be valid URL
-            const urlRegex = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            if (value && !urlRegex.test(value)) {
-                newErrors.socialLink = 'LỖI KẾT NỐI: LINK KHÔNG HỢP LỆ';
-            } else if (value && isProfane(value)) {
-                newErrors.socialLink = '⚠️ SECURITY ALERT: LINK ĐỘC HẠI';
-            } else {
-                delete newErrors.socialLink;
-            }
+            // Optional field - accept any input (no validation as per user request)
+            delete newErrors.socialLink;
         }
 
         setErrors(newErrors);
